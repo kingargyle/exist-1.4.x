@@ -154,7 +154,7 @@
 	<repositories>
 		<repository>
 			<id>jboss-thirdparty</id>
-			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
+			<url>https://repository.jboss.org/nexus/content/repositories/deprecated/</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>30</updatePolicy>
