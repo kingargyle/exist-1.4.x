@@ -470,7 +470,7 @@ public class BasicNodeSetTest {
     }
 	
     private static BrokerPool startDB() throws DatabaseConfigurationException, EXistException {
-        String home, file = "conf.xml";
+        String home, file = "src/test/resources/conf.xml";
         home = System.getProperty("exist.home");
         if (home == null) {
             home = System.getProperty("user.dir");
