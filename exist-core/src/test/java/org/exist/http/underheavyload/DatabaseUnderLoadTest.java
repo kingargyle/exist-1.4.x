@@ -22,6 +22,7 @@
 package org.exist.http.underheavyload;
 
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -35,6 +36,7 @@ public class DatabaseUnderLoadTest {
 	org.exist.start.Main database;
 	
 	@Test
+	@Ignore
 	public void testHeavyLoad() {
 		database = new org.exist.start.Main("jetty");
 		database.run(new String[]{"jetty"});

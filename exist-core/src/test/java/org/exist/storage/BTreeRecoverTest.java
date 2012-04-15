@@ -38,6 +38,9 @@ import org.exist.storage.txn.TransactionManager;
 import org.exist.storage.txn.Txn;
 import org.exist.util.Configuration;
 import org.exist.xquery.TerminatedException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests transaction management and basic recovery for the BTree base class.
@@ -54,6 +57,7 @@ public class BTreeRecoverTest extends TestCase {
     private BrokerPool pool;
     private int count = 0;
     
+    @Test
     public void testAdd() {
         System.out.println("Add some random data and force db corruption ...\n");
         
@@ -110,6 +114,7 @@ public class BTreeRecoverTest extends TestCase {
         }
     }
     
+    @Test
     public void testGet() {
         System.out.println("Recover and read the data ...\n");
         TransactionManager mgr = pool.getTransactionManager();
@@ -137,7 +142,8 @@ public class BTreeRecoverTest extends TestCase {
         }
     }
     
-    protected void setUp() {
+    @Before
+    public void setUp() {
         try {
             Configuration config = new Configuration();
             BrokerPool.configure(1, 5, config);
@@ -147,7 +153,8 @@ public class BTreeRecoverTest extends TestCase {
         }
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
     	try {
 	        BrokerPool.stopAll(false);
 	    } catch (Exception e) {            
