@@ -180,7 +180,7 @@ public class RangeIndexUpdateTest {
         DBBroker broker = null;
         TransactionManager transact = null;
         Txn transaction = null;
-        try {
+        try {	
             File confFile = ConfigurationHelper.lookup("conf.xml");
             Configuration config = new Configuration(confFile.getAbsolutePath());
             BrokerPool.configure(1, 5, config);

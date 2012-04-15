@@ -80,7 +80,7 @@ public class ConfigurationHelper {
         
         // try user.dir
         existHome = new File(System.getProperty("user.dir"));
-        if (existHome.isDirectory() && new File(existHome, config).isFile()) {
+        if (existHome.isDirectory() && new File(config).isFile()) {
             LOG.debug("Got eXist home from system property 'user.dir': " + existHome);
             return existHome;
         }

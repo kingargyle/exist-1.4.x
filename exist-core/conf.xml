@@ -322,6 +322,9 @@
         <!--
         <security class="org.exist.security.LDAPSecurityManager" />
         -->
+        <!-- 
+        <security class="org.exist.security.XMLSecurityManager"/>
+        -->
 
         <!--
             This is the global configuration for the query watchdog. The 
