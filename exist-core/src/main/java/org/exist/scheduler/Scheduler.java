@@ -97,7 +97,7 @@ public class Scheduler
 		try
 		{
 			//load the properties for quartz
-            InputStream is = Scheduler.class.getResourceAsStream("quartz.properties");
+            InputStream is = ClassLoader.getSystemResourceAsStream("quartz.properties");
             Properties properties = new Properties();
             try
             {

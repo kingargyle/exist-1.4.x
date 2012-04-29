@@ -1,6 +1,5 @@
 package org.exist.security;
 
-import org.exist.storage.DBBroker;
 import org.exist.xmldb.DatabaseInstanceManager;
 import org.exist.xmldb.UserManagementService;
 import org.exist.StandaloneServer;

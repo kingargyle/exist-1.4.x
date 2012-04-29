@@ -283,7 +283,7 @@ public class AtomServlet extends HttpServlet {
                String className = moduleConf.getAttribute("class");
                if (className!=null && className.length()>0) {
                   try {
-                     Class moduleClass = Class.forName(className);
+                     Class moduleClass = ClassLoader.getSystemClassLoader().loadClass(className);
                      AtomModule amodule = (AtomModule)moduleClass.newInstance();
                      modules.put(name,amodule);
                      amodule.init(new ModuleContext(config,name, atomConf.getParent()));
@@ -548,7 +548,7 @@ public class AtomServlet extends HttpServlet {
       }
        try {
          LOG.info("registering XMLDB driver");
-         Class clazz = Class.forName("org.exist.xmldb.DatabaseImpl");
+         Class clazz = ClassLoader.getSystemClassLoader().loadClass("org.exist.xmldb.DatabaseImpl");
          Database database = (Database)clazz.newInstance();
          DatabaseManager.registerDatabase(database);
       } catch (ClassNotFoundException e) {

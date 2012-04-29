@@ -842,7 +842,7 @@ public class Configuration implements ErrorHandler
         }
         
         try {
-            config.put(BrokerPool.PROPERTY_SECURITY_CLASS, Class.forName(securityManagerClassName));
+            config.put(BrokerPool.PROPERTY_SECURITY_CLASS,  ClassLoader.getSystemClassLoader().loadClass(securityManagerClassName));
             LOG.debug(BrokerPool.PROPERTY_SECURITY_CLASS + ": " + config.get(BrokerPool.PROPERTY_SECURITY_CLASS));
         } catch (Throwable ex) {
             if (ex instanceof ClassNotFoundException) {
