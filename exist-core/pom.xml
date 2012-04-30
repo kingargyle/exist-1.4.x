@@ -17,13 +17,13 @@
             <version>2.12</version>
             <configuration>
                <includes>
-                  <include>**/All*.java</include>
+                  <include>**/AllCollection*.java</include>
                </includes>
                <testFailureIgnore>true</testFailureIgnore>
-              <runOrder>random</runOrder>
-             <systemPropertyVariables>
-               <exist.home>${basedir}</exist.home>
-             </systemPropertyVariables>
+               <runOrder>random</runOrder>
+               <systemPropertyVariables>
+                  <exist.home>${basedir}</exist.home>
+               </systemPropertyVariables>
             </configuration>
          </plugin>
       </plugins>

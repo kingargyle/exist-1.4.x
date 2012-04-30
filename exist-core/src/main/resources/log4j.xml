@@ -215,7 +215,7 @@
     <!-- Section: ROOT logger -->
     
     <root>
-        <priority value="info"/>
+        <priority value="debug"/>
         <appender-ref ref="exist.core"/>
     </root>
     

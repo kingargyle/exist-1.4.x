@@ -210,7 +210,7 @@ public class Main {
 		Database database;
 		try {
 			Class cl =
-				Class.forName(properties.getProperty("driver", "org.exist.xmldb.DatabaseImpl"));
+				ClassLoader.getSystemClassLoader().loadClass(properties.getProperty("driver", "org.exist.xmldb.DatabaseImpl"));
 			database = (Database) cl.newInstance();
 			database.setProperty("create-database", "true");
 			if (properties.containsKey("configuration"))

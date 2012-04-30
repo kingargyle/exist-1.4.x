@@ -239,6 +239,7 @@ public class BrokerPool extends Observable {
                 
             } catch (Throwable ex){
                 // Catch all possible issues and report.
+            	ex.printStackTrace();
                 LOG.error("Unable to initialialize database instance '" + instanceName
                         + "': "+ex.getMessage(), ex);
             }

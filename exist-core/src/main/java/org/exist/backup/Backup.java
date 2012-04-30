@@ -409,7 +409,7 @@ public class Backup {
 
     public static void main(String args[]) {
 		try {
-			Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
+			Class cl = ClassLoader.getSystemClassLoader().loadClass("org.exist.xmldb.DatabaseImpl");
 			Database database = (Database) cl.newInstance();
 			database.setProperty("create-database", "true");
 			DatabaseManager.registerDatabase(database);

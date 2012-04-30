@@ -228,7 +228,7 @@ public class Configuration implements ErrorHandler
             // firstly, try to read the configuration from a file within the
             // classpath
             try {
-                is = Configuration.class.getClassLoader().getResourceAsStream(configFilename);
+                is = ClassLoader.getSystemClassLoader().getResourceAsStream(configFilename);
                 if (is != null) LOG.info("Reading configuration from classloader");
             } catch (Exception e) {
                 // EB: ignore and go forward, e.g. in case there is an absolute

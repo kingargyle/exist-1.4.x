@@ -45,7 +45,7 @@ public class User {
 		Properties props = new Properties(); 
 		try {
 			props.load(
-					User.class.getClassLoader().getResourceAsStream("org/exist/security/security.properties")
+					ClassLoader.getSystemClassLoader().getResourceAsStream("org/exist/security/security.properties")
 			);
 		} catch (IOException e) {
 		}

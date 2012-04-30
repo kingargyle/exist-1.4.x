@@ -41,7 +41,7 @@ public class SystemInfo implements SystemInfoMBean {
 
     public SystemInfo() {
         try {
-            sysProperties.load(SystemInfo.class.getClassLoader().getResourceAsStream("org/exist/system.properties"));
+            sysProperties.load(ClassLoader.getSystemClassLoader().getResourceAsStream("org/exist/system.properties"));
         } catch (IOException e) {
             LOG.debug("Unable to load system.properties from class loader");
         }
