@@ -4,3 +4,6 @@ target
 .project
 *.log
 *~
+*.dbx
+*.log.*
+
