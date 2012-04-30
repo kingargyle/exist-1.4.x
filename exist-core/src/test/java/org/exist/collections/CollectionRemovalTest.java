@@ -21,6 +21,9 @@
  */
 package org.exist.collections;
 
+import java.io.File;
+
+import org.apache.commons.io.FileUtils;
 import org.exist.dom.DocumentImpl;
 import org.exist.security.Permission;
 import org.exist.security.User;
@@ -250,6 +253,7 @@ public class CollectionRemovalTest {
     public static void startDB() {
         try {
 			Configuration config = new Configuration();
+			cleanWebappDataDir(config.getExistHome());
 			BrokerPool.configure(1, 40, config);
 			pool = BrokerPool.getInstance();
         } catch (Exception e) {
@@ -270,4 +274,10 @@ public class CollectionRemovalTest {
 		}
 		pool = null;
 	}
+    
+    public static void cleanWebappDataDir(File existHome) throws Exception {
+		File dataDir = new File(existHome, "webapp/WEB-INF/data");
+		FileUtils.deleteDirectory(dataDir);
+		FileUtils.forceMkdir(dataDir);
+    }
 }

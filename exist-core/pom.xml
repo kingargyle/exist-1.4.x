@@ -18,6 +18,8 @@
             <configuration>
                <includes>
                   <include>**/AllCollection*.java</include>
+                  <include>**/AllTrigger*.java</include>
+                  <include>**/AllFulltext*.java</include>
                </includes>
                <testFailureIgnore>true</testFailureIgnore>
                <runOrder>random</runOrder>
