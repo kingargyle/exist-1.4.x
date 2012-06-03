@@ -14,6 +14,7 @@ import junit.framework.TestCase;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.exist.storage.DBBroker;
+import org.exist.util.Configuration;
 import org.exist.util.XMLFilenameFilter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -315,10 +316,8 @@ public class ResourceTest extends TestCase {
             assertNotNull(testCollection);
             
             String directory = "samples/shakespeare";
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-            File dir = new File(existDir,directory);
-            File files[] = dir.listFiles(new XMLFilenameFilter());
+			File f = new File(ClassLoader.getSystemClassLoader().getResource(directory).toURI().toURL().getFile());
+            File files[] = f.listFiles(new XMLFilenameFilter());
 
             for (int i = 0; i < files.length; i++) {
                 XMLResource res = (XMLResource) testCollection.createResource(files[i].getName(), "XMLResource");

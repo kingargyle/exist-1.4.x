@@ -101,7 +101,6 @@ public class CreateCollectionsTest extends TestCase {
 			System.out.println("---------------------------------------");
 			System.out.println("storing all XML files in directory " +directory+"...");
 			System.out.println("---------------------------------------");
-            String existHome = System.getProperty("exist.home");
 			File f = new File(ClassLoader.getSystemClassLoader().getResource(directory).toURI().toURL().getFile());
 			File files[] = f.listFiles(new XMLFilenameFilter());
 

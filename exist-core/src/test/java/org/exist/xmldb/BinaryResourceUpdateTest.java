@@ -13,7 +13,7 @@
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *  GNU Lesser General Public License for more details.
  *  
-*  You should have received a copy of the GNU Lesser General Public License
+ *  You should have received a copy of the GNU Lesser General Public License
  *  along with this program; if not, write to the Free Software Foundation
  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *  
@@ -31,6 +31,9 @@ import org.xmldb.api.modules.BinaryResource;
 import org.xmldb.api.modules.XMLResource;
 
 import org.exist.storage.DBBroker;
+import org.exist.util.Configuration;
+import org.exist.util.DatabaseConfigurationException;
+import org.exist.util.XMLFilenameFilter;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -38,122 +41,121 @@ import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 
 public class BinaryResourceUpdateTest extends TestCase {
-    
-    private Database database;
-    private Collection testCollection;
 
-    private static File binFile = null;
-    private static File xmlFile = null;
+	private Database database;
+	private Collection testCollection;
 
-    private static final int REPEAT = 10;
+	private static File binFile = null;
+	private static File xmlFile = null;
 
-    static {
-      String existHome = System.getProperty("exist.home");
-      File existDir = existHome==null ? new File(".") : new File(existHome);
-      binFile = new File(existDir, "LICENSE");
-      xmlFile = new File(existDir, "samples/examples.xml");
-    }
+	private static final int REPEAT = 10;
 
-    public void testUpdateBinary() {
-        try {
-            for (int i = 0; i < REPEAT; i++) {
-                BinaryResource binaryResource = (BinaryResource)
-                        testCollection.createResource("test1.xml", "BinaryResource");
-                binaryResource.setContent(binFile);
-                testCollection.storeResource(binaryResource);
+	static {
 
-                Resource resource = testCollection.getResource("test1.xml");
-                assertNotNull(resource);
-                System.out.println("Content:\n" + resource.getContent().toString());
-
-                XMLResource xmlResource = (XMLResource) testCollection.createResource("test2.xml", "XMLResource");
-                xmlResource.setContent(xmlFile);
-                testCollection.storeResource(xmlResource);
-
-                resource = testCollection.getResource("test2.xml");
-                assertNotNull(resource);
-                System.out.println("Content:\n" + resource.getContent().toString());
-            }
-        } catch (XMLDBException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-    }
-
-    // with same docname test fails for windows 
-    public void testUpdateBinary_windows() {
-        try {
-            for (int i = 0; i < REPEAT; i++) {
-                BinaryResource binaryResource = (BinaryResource)
-                        testCollection.createResource("test.xml", "BinaryResource");
-                binaryResource.setContent(binFile);
-                testCollection.storeResource(binaryResource);
-
-                Resource resource = testCollection.getResource("test.xml");
-                assertNotNull(resource);
-                System.out.println("Content:\n" + resource.getContent().toString());
-
-                XMLResource xmlResource = (XMLResource) testCollection.createResource("test.xml", "XMLResource");
-                xmlResource.setContent(xmlFile);
-                testCollection.storeResource(xmlResource);
-
-                resource = testCollection.getResource("test.xml");
-                assertNotNull(resource);
-                System.out.println("Content:\n" + resource.getContent().toString());
-            }
-        } catch (XMLDBException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
-    }
-
-    protected void setUp() {
 		try {
-			// initialize driver
-			Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
-			database = (Database) cl.newInstance();
-			database.setProperty("create-database", "true");
-			DatabaseManager.registerDatabase(database);
+			Configuration config = new Configuration();
+			File existHome = config.getExistHome();
+			binFile = new File(existHome, "LICENSE");
 
-            Collection root =
-				DatabaseManager.getCollection("xmldb:exist://" + DBBroker.ROOT_COLLECTION, "admin",	null);
-			CollectionManagementService service =
-				(CollectionManagementService) root.getService("CollectionManagementService", "1.0");
-			testCollection = service.createCollection("test");
-			assertNotNull(testCollection);
-
-		} catch (ClassNotFoundException e) {
-		} catch (InstantiationException e) {
-		} catch (IllegalAccessException e) {
-		} catch (XMLDBException e) {
-			e.printStackTrace();
+		} catch (DatabaseConfigurationException e1) {
+			e1.printStackTrace();
 		}
+
+		try {
+			xmlFile = new File(ClassLoader.getSystemClassLoader()
+					.getResource("samples/examples.xml").toURI().toURL()
+					.getFile());
+		} catch (MalformedURLException e) {
+		} catch (URISyntaxException e) {
+		}
+
+	}
+
+	public void testUpdateBinary() throws Exception {
+		for (int i = 0; i < REPEAT; i++) {
+			BinaryResource binaryResource = (BinaryResource) testCollection
+					.createResource("test1.xml", "BinaryResource");
+			binaryResource.setContent(binFile);
+			testCollection.storeResource(binaryResource);
+
+			Resource resource = testCollection.getResource("test1.xml");
+			assertNotNull(resource);
+			System.out.println("Content:\n" + resource.getContent().toString());
+
+			XMLResource xmlResource = (XMLResource) testCollection
+					.createResource("test2.xml", "XMLResource");
+			xmlResource.setContent(xmlFile);
+			testCollection.storeResource(xmlResource);
+
+			resource = testCollection.getResource("test2.xml");
+			assertNotNull(resource);
+			System.out.println("Content:\n" + resource.getContent().toString());
+		}
+	}
+
+	// with same docname test fails for windows
+	public void testUpdateBinary_windows() throws Exception {
+		for (int i = 0; i < REPEAT; i++) {
+			BinaryResource binaryResource = (BinaryResource) testCollection
+					.createResource("test.xml", "BinaryResource");
+			binaryResource.setContent(binFile);
+			testCollection.storeResource(binaryResource);
+
+			Resource resource = testCollection.getResource("test.xml");
+			assertNotNull(resource);
+			System.out.println("Content:\n" + resource.getContent().toString());
+
+			XMLResource xmlResource = (XMLResource) testCollection
+					.createResource("test.xml", "XMLResource");
+			xmlResource.setContent(xmlFile);
+			testCollection.storeResource(xmlResource);
+
+			resource = testCollection.getResource("test.xml");
+			assertNotNull(resource);
+			System.out.println("Content:\n" + resource.getContent().toString());
+		}
+	}
+
+	protected void setUp() throws Exception {
+		// initialize driver
+		Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
+		database = (Database) cl.newInstance();
+		database.setProperty("create-database", "true");
+		DatabaseManager.registerDatabase(database);
+
+		Collection root = DatabaseManager.getCollection("xmldb:exist://"
+				+ DBBroker.ROOT_COLLECTION, "admin", null);
+		CollectionManagementService service = (CollectionManagementService) root
+				.getService("CollectionManagementService", "1.0");
+		testCollection = service.createCollection("test");
+		assertNotNull(testCollection);
 	}
 
 	/*
 	 * @see TestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-        CollectionManagementService service = (CollectionManagementService)
-            testCollection.getParentCollection().getService("CollectionManagementService", "1.0");
-        service.removeCollection("/db/test");
+		CollectionManagementService service = (CollectionManagementService) testCollection
+				.getParentCollection().getService(
+						"CollectionManagementService", "1.0");
+		service.removeCollection("/db/test");
 
-
-        DatabaseManager.deregisterDatabase(database);
-		DatabaseInstanceManager dim =
-			(DatabaseInstanceManager) testCollection.getService(
-				"DatabaseInstanceManager", "1.0");
+		DatabaseManager.deregisterDatabase(database);
+		DatabaseInstanceManager dim = (DatabaseInstanceManager) testCollection
+				.getService("DatabaseInstanceManager", "1.0");
 		dim.shutdown();
-        testCollection = null;
-        database = null;
+		testCollection = null;
+		database = null;
 
 		System.out.println("tearDown PASSED");
 	}
 
-    public static void main(String[] args) {
-        BasicConfigurator.configure();
-        TestRunner.run(BinaryResourceUpdateTest.class);
-    }
+	public static void main(String[] args) {
+		BasicConfigurator.configure();
+		TestRunner.run(BinaryResourceUpdateTest.class);
+	}
 }
