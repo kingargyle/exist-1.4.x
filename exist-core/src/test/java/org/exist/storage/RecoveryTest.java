@@ -67,9 +67,14 @@ public class RecoveryTest extends TestCase {
     
     private static File dir = null;
     static {
-      String existHome = System.getProperty("exist.home");
-      File existDir = existHome==null ? new File(".") : new File(existHome);
-      dir = new File(existDir,directory);
+		String directory = "samples/shakespear";
+		try {
+			dir = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
+		}
+	    catch (Exception ex) {
+	    	
+	    }
     }
     
     private static String TEST_XML =

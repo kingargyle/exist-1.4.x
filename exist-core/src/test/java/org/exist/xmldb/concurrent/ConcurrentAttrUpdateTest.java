@@ -10,6 +10,10 @@ import java.io.File;
 
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.AttributeUpdateAction;
+import org.junit.After;
+import org.junit.Before;
+
+import static org.junit.Assert.*;
 
 /**
  * @author wolf
@@ -23,11 +27,7 @@ public class ConcurrentAttrUpdateTest extends ConcurrentTestBase {
 	
 	private final static String QUERY =
 		"//ELEMENT[@attribute-1]";
-	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ConcurrentAttrUpdateTest.class);
-	}
-	
+		
 	private File tempFile;
 	
 	/**
@@ -39,7 +39,8 @@ public class ConcurrentAttrUpdateTest extends ConcurrentTestBase {
 		super(name, URI, "C1");
 	}
 	
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		try {
 			super.setUp();		
 			String[] wordList = DBUtils.wordList(rootCol);
@@ -63,7 +64,8 @@ public class ConcurrentAttrUpdateTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#tearDown()
 	 */
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		try {
 			super.tearDown();
 			tempFile.delete();

@@ -21,11 +21,9 @@
  */
 package org.exist.storage;
 
-import java.io.File;
+import java.io.File; 
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
-
+import org.exist.AbstractDBTest;
 import org.exist.collections.Collection;
 import org.exist.collections.IndexInfo;
 import org.exist.dom.DocumentImpl;
@@ -38,17 +36,18 @@ import org.exist.test.TestConstants;
 import org.exist.util.Configuration;
 import org.exist.xmldb.CollectionManagementServiceImpl;
 import org.exist.xmldb.XmldbURI;
+import org.junit.After;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Database;
 import org.xmldb.api.base.Resource;
 
-public class CopyCollectionTest extends TestCase {
+import static org.junit.Assert.*;
 
-    public static void main(String[] args) {
-        TestRunner.run(CopyCollectionTest.class);
-    }
-    
+public class CopyCollectionTest extends AbstractDBTest {
+
+    @Test
     public void testStore() {
         BrokerPool.FORCE_CORRUPTION = true;
         BrokerPool pool = startDB();
@@ -67,9 +66,10 @@ public class CopyCollectionTest extends TestCase {
             Collection test = broker.getOrCreateCollection(transaction, TestConstants.TEST_COLLECTION_URI.append("test2"));
             broker.saveCollection(transaction, test);
     
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-            File f = new File(existDir,"samples/biblio.rdf");
+	   		String directory = "samples/biblio.rdf";
+	   		File f = new File(ClassLoader.getSystemClassLoader()
+	   				.getResource(directory).toURI().toURL().getFile());
+                                    
             IndexInfo info = test.validateXMLResource(transaction, broker, XmldbURI.create("test.xml"),
                     new InputSource(f.toURI().toASCIIString()));
             test.store(transaction, broker, info, new InputSource(f.toURI().toASCIIString()), false);
@@ -89,6 +89,7 @@ public class CopyCollectionTest extends TestCase {
         }
     }
     
+    @Test
     public void testRead() {
         BrokerPool.FORCE_CORRUPTION = false;
         BrokerPool pool = null;
@@ -117,6 +118,7 @@ public class CopyCollectionTest extends TestCase {
         }
     }
     
+    @Test
     public void testStoreAborted() {
         BrokerPool.FORCE_CORRUPTION = true;
         BrokerPool pool = null;
@@ -141,9 +143,10 @@ public class CopyCollectionTest extends TestCase {
             assertNotNull(test2);
             broker.saveCollection(transaction, test2);
     
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-            File f = new File(existDir,"samples/biblio.rdf");
+	   		String directory = "samples/biblio.rdf";
+	   		File f = new File(ClassLoader.getSystemClassLoader()
+	   				.getResource(directory).toURI().toURL().getFile());
+            
             assertNotNull(f);
             IndexInfo info = test2.validateXMLResource(transaction, broker, XmldbURI.create("test.xml"), new InputSource(f.toURI().toASCIIString()));
             test2.store(transaction, broker, info, new InputSource(f.toURI().toASCIIString()), false);
@@ -170,6 +173,7 @@ public class CopyCollectionTest extends TestCase {
         }
     }
     
+    @Test
     public void testReadAborted() {
         BrokerPool.FORCE_CORRUPTION = false;
         BrokerPool pool = null;
@@ -194,6 +198,7 @@ public class CopyCollectionTest extends TestCase {
         }
     }
     
+    @Test
     public void testXMLDBStore() {
         BrokerPool.FORCE_CORRUPTION = false;
         BrokerPool pool = null;
@@ -214,9 +219,9 @@ public class CopyCollectionTest extends TestCase {
 	            test2 = mgr.createCollection(TestConstants.TEST_COLLECTION_URI.append("test2").toString());
 	        assertNotNull(test2);
 	        
-                String existHome = System.getProperty("exist.home");
-                File existDir = existHome==null ? new File(".") : new File(existHome);
-	        File f = new File(existDir,"samples/biblio.rdf");
+	   		String directory = "samples/biblio.rdf";
+	   		File f = new File(ClassLoader.getSystemClassLoader()
+	   				.getResource(directory).toURI().toURL().getFile());
 	        assertNotNull(f);
 	        Resource res = test2.createResource("test_xmldb.xml", "XMLResource");
 	        assertNotNull(res);
@@ -234,6 +239,7 @@ public class CopyCollectionTest extends TestCase {
 	    }
     }
     
+    @Test
     public void testXMLDBRead() {    	
         BrokerPool.FORCE_CORRUPTION = false;
         BrokerPool pool = null;
@@ -275,7 +281,8 @@ public class CopyCollectionTest extends TestCase {
         return null;
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         BrokerPool.stopAll(false);
     }
 }

@@ -72,9 +72,10 @@ public class MoveCollectionTest extends TestCase {
             assertNotNull(test);
             broker.saveCollection(transaction, test);
     
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-            File f = new File(existDir,"samples/biblio.rdf");
+			String directory = "samples/biblio.rdf";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
+            
             assertNotNull(f);
             IndexInfo info = test.validateXMLResource(transaction, broker, TestConstants.TEST_XML_URI, new InputSource(f.toURI().toASCIIString()));
             assertNotNull(info);
@@ -107,7 +108,7 @@ public class MoveCollectionTest extends TestCase {
             Serializer serializer = broker.getSerializer();
             serializer.reset();
             
-            DocumentImpl doc = broker.getXMLResource(XmldbURI.ROOT_COLLECTION_URI.append("/destination1/test3/test.xml"), Lock.READ_LOCK);
+            DocumentImpl doc = broker.getXMLResource(XmldbURI.ROOT_COLLECTION_URI.append("/destination/test3/test.xml"), Lock.READ_LOCK);
             assertNotNull("Document should not be null", doc);
             String data = serializer.serialize(doc);
             assertNotNull(data);
@@ -143,9 +144,9 @@ public class MoveCollectionTest extends TestCase {
             assertNotNull(test2);
             broker.saveCollection(transaction, test2);
     
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-            File f = new File(existDir,"samples/biblio.rdf");
+			String directory = "samples/biblio.rdf";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
             assertNotNull(f);
             IndexInfo info = test2.validateXMLResource(transaction, broker, TestConstants.TEST_XML_URI, new InputSource(f.toURI().toASCIIString()));
             assertNotNull(info);            
@@ -216,9 +217,9 @@ public class MoveCollectionTest extends TestCase {
 	            test2 = mgr.createCollection("test2");
 	        assertNotNull(test2);
 	        
-                String existHome = System.getProperty("exist.home");
-                File existDir = existHome==null ? new File(".") : new File(existHome);
-	        File f = new File(existDir,"samples/biblio.rdf");
+			String directory = "samples/biblio.rdf";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
 	        assertNotNull(f);
 	        Resource res = test2.createResource("test_xmldb.xml", "XMLResource");
 	        assertNotNull(res);

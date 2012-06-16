@@ -23,12 +23,14 @@ package org.exist.xmldb;
 import java.net.BindException;
 import java.util.Iterator;
 
-import junit.textui.TestRunner;
+import static org.junit.Assert.*;
 
 import org.exist.StandaloneServer;
 import org.exist.security.Permission;
 import org.exist.security.PermissionFactory;
 import org.exist.storage.DBBroker;
+import org.junit.Before;
+import org.junit.Test;
 import org.mortbay.util.MultiException;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -49,11 +51,9 @@ public class RemoteDatabaseImplTest extends RemoteDBTest {
 	protected final static String ADMIN_PASSWORD = "somepwd";
 	protected final static String ADMIN_COLLECTION_NAME = "admin-collection";
 
-	public RemoteDatabaseImplTest(String name) {
-		super(name);
-	}
 
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		// Don't worry about closing the server : the shutdown hook will do the
 		// job
 		initServer();
@@ -90,6 +90,7 @@ public class RemoteDatabaseImplTest extends RemoteDBTest {
 		}
 	}
 
+	@Test
 	public void testGetCollection() throws Exception {
 		Class cl = Class.forName(DB_DRIVER);
 		Database database = (Database) cl.newInstance();

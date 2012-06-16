@@ -4,16 +4,16 @@ import java.io.File;
 
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.XQueryUpdateAction;
+import org.junit.After;
+import org.junit.Before;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
 
-public class ConcurrentQueryUpdateTest extends ConcurrentTestBase {
+import static org.junit.Assert.*;
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ConcurrentQueryUpdateTest.class);
-	}
+public class ConcurrentQueryUpdateTest extends ConcurrentTestBase {
 
 	private final static String URI = "xmldb:exist://" + DBBroker.ROOT_COLLECTION;
 	
@@ -23,7 +23,8 @@ public class ConcurrentQueryUpdateTest extends ConcurrentTestBase {
 		super(name, URI, "C1");
 	}
 	
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		try {
 			super.setUp();
 			
@@ -42,7 +43,8 @@ public class ConcurrentQueryUpdateTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#tearDown()
 	 */
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		try {
 			Collection col = getTestCollection();
 			XQueryService service = (XQueryService) col.getService("XQueryService", "1.0");

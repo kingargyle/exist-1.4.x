@@ -24,6 +24,8 @@ package org.exist.xmldb.concurrent;
 
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.TextUpdateAction;
+import org.junit.Assert;
+import org.junit.Before;
 
 
 
@@ -37,21 +39,19 @@ public class TextUpdateTest extends ConcurrentTestBase {
 	private final static String XML =
 		"<article/>";
 	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(TextUpdateTest.class);
-	}
 	
 	public TextUpdateTest(String name) {
 		super(name, URI, "C1");
 	}
 	
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		try {
 			super.setUp();			
 			DBUtils.addXMLResource(getTestCollection(), "R1.xml", XML);	        
 			addAction(new TextUpdateAction(URI + "/C1", "R1.xml"), 1000, 0, 0);
 		} catch (Exception e) {            
-            fail(e.getMessage()); 
+            Assert.fail(e.getMessage()); 
         }				
 	}
 		

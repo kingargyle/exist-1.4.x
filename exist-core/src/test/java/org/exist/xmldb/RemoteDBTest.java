@@ -22,9 +22,10 @@ package org.exist.xmldb;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import org.apache.commons.io.FileUtils;
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
 import org.exist.util.Configuration;
 import org.xmldb.api.DatabaseManager;
@@ -38,18 +39,13 @@ import org.xmldb.api.modules.CollectionManagementService;
  * @author Sebastian Bossung, Technische Universitaet Hamburg-Harburg
  * @author Pierrick Brihaye <pierrick.brihaye@free.fr>
  */
-// TODO : manage content from here, not from the derived classes
-public abstract class RemoteDBTest extends TestCase {
+public abstract class RemoteDBTest extends AbstractDBTest {
 
 	protected final static String URI = "xmldb:exist://localhost:8088/xmlrpc";
 	private final static String CHILD_COLLECTION = "unit-testing-collection-Citt\u00E0";
 	public final static String DB_DRIVER = "org.exist.xmldb.DatabaseImpl";
 
 	private RemoteCollection collection = null;
-
-	public RemoteDBTest(String name) {
-		super(name);
-	}
 
 	protected void setUpRemoteDatabase() throws Exception {
 		// Connect to the DB
@@ -80,17 +76,6 @@ public abstract class RemoteDBTest extends TestCase {
 		cms.removeCollection(CHILD_COLLECTION);
 	}
 	
-	// Make sure we have a clean database directory to start with.
-	protected void cleanUp() throws Exception {
-		Configuration config = new Configuration();
-		File existHome = config.getExistHome();
-		File dataDir = new File(existHome, "webapp/WEB-INF/data");
-		if (dataDir.exists()) {
-			FileUtils.cleanDirectory(dataDir);
-		}
-	}
-	
-
 	public RemoteCollection getCollection() {
 		return collection;
 	}

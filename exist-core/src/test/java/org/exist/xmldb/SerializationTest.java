@@ -1,8 +1,15 @@
 package org.exist.xmldb;
 
-import org.custommonkey.xmlunit.XMLTestCase;
+import static org.custommonkey.xmlunit.XMLAssert.*;
+
+import org.custommonkey.xmlunit.XMLAssert;
+import org.exist.AbstractDBTest;
 import org.exist.Namespaces;
 import org.exist.storage.DBBroker;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
@@ -13,7 +20,7 @@ import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
 
-public class SerializationTest extends XMLTestCase {
+public class SerializationTest extends AbstractDBTest {
 
 	private static final String TEST_COLLECTION_NAME = "test";
 
@@ -41,14 +48,11 @@ public class SerializationTest extends XMLTestCase {
 		"    </c:Site>\n" +
 		"</exist:result>";
 
-	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(SerializationTest.class);
-	}
-
 	private Database database;
 	private Collection testCollection;
-	
+
+	@Test
+	@Ignore("They say this is buggy")
 	public void testQueryResults() {
 		try {
 			XQueryService service = (XQueryService) testCollection.getService("XQueryService", "1.0");
@@ -56,7 +60,7 @@ public class SerializationTest extends XMLTestCase {
 			Resource resource = result.getMembersAsResource();
 			String str = resource.getContent().toString();
 			System.out.println(str);
-			assertXMLEqual(XML_EXPECTED1, str);
+			XMLAssert.assertXMLEqual(XML_EXPECTED1, str);
 			
 			//TODO : THIS IS BUGGY !
 			result = service.query("declare namespace config='urn:config'; " +
@@ -77,7 +81,8 @@ public class SerializationTest extends XMLTestCase {
 		}
 	}
 	
-	protected void setUp() {
+	@Before
+	public void setUp() {
         try {
             // initialize driver
             Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
@@ -107,10 +112,8 @@ public class SerializationTest extends XMLTestCase {
         }
     }
 
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() {
+	@After
+    public void tearDown() {
     	try {
 	        Collection root =
 	            DatabaseManager.getCollection("xmldb:exist://" + DBBroker.ROOT_COLLECTION, "admin", null);

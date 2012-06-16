@@ -26,6 +26,7 @@ import java.io.File;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
+import org.exist.AbstractDBTest;
 import org.exist.collections.Collection;
 import org.exist.collections.IndexInfo;
 import org.exist.dom.DocumentImpl;
@@ -36,68 +37,79 @@ import org.exist.storage.txn.TransactionManager;
 import org.exist.storage.txn.Txn;
 import org.exist.util.Configuration;
 import org.exist.xmldb.XmldbURI;
+import org.junit.After;
+import org.junit.Test;
 import org.xml.sax.InputSource;
+
+import static org.junit.Assert.*;
 
 /**
  * @author wolf
  * 
  */
-public class CopyResourceTest extends TestCase {
+public class CopyResourceTest extends AbstractDBTest {
 
-	public static void main(String[] args) {
-		TestRunner.run(CopyResourceTest.class);
-	}	
 
+	@Test
 	public void testStore() {
 		BrokerPool.FORCE_CORRUPTION = true;
 		BrokerPool pool = null;
 		DBBroker broker = null;
-		
+
 		try {
 			pool = startDB();
 			assertNotNull(pool);
 			broker = pool.get(SecurityManager.SYSTEM_USER);
-			assertNotNull(broker);			
+			assertNotNull(broker);
 			TransactionManager transact = pool.getTransactionManager();
 			assertNotNull(transact);
 			Txn transaction = transact.beginTransaction();
 			assertNotNull(transaction);
 			System.out.println("Transaction started ...");
 
-			Collection root = broker.getOrCreateCollection(transaction,	XmldbURI.ROOT_COLLECTION_URI.append("test"));
+			Collection root = broker.getOrCreateCollection(transaction,
+					XmldbURI.ROOT_COLLECTION_URI.append("test"));
 			assertNotNull(root);
 			broker.saveCollection(transaction, root);
 
-			Collection test2 = broker.getOrCreateCollection(transaction, XmldbURI.ROOT_COLLECTION_URI.append("test/test2"));
+			Collection test2 = broker.getOrCreateCollection(transaction,
+					XmldbURI.ROOT_COLLECTION_URI.append("test/test2"));
 			assertNotNull(test2);
 			broker.saveCollection(transaction, test2);
 
-                        String existHome = System.getProperty("exist.home");
-                        File existDir = existHome==null ? new File(".") : new File(existHome);
-			File f = new File(existDir,"samples/shakespeare/r_and_j.xml");
-			assertNotNull(f);
-			IndexInfo info = test2.validateXMLResource(transaction, broker, XmldbURI.create("test.xml"), new InputSource(f.toURI().toASCIIString()));
-			assertNotNull(info);
-			test2.store(transaction, broker, info, new InputSource(f.toURI().toASCIIString()), false);
+			String directory = "samples/shakespeare/r_and_j.xml";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
 
-			broker.copyResource(transaction, info.getDocument(), root, XmldbURI.create("new_test.xml"));
+			assertNotNull(f);
+			IndexInfo info = test2.validateXMLResource(transaction, broker,
+					XmldbURI.create("test.xml"), new InputSource(f.toURI()
+							.toASCIIString()));
+			assertNotNull(info);
+			test2.store(transaction, broker, info, new InputSource(f.toURI()
+					.toASCIIString()), false);
+
+			broker.copyResource(transaction, info.getDocument(), root,
+					XmldbURI.create("new_test.xml"));
 			broker.saveCollection(transaction, root);
 
 			transact.commit(transaction);
 			System.out.println("Transaction commited ...");
-	    } catch (Exception e) {
-            e.printStackTrace();
-	        fail(e.getMessage()); 	      			
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail(e.getMessage());
 		} finally {
-			if (pool != null) pool.release(broker);
+			if (pool != null)
+				pool.release(broker);
 		}
 	}
 
+	@Test
 	public void testRead() {
 		BrokerPool.FORCE_CORRUPTION = false;
 		BrokerPool pool = null;
 		DBBroker broker = null;
-		
+
 		try {
 			System.out.println("testRead() ...\n");
 			pool = startDB();
@@ -107,19 +119,22 @@ public class CopyResourceTest extends TestCase {
 			Serializer serializer = broker.getSerializer();
 			serializer.reset();
 
-			DocumentImpl doc = broker.getXMLResource(XmldbURI.ROOT_COLLECTION_URI.append("test/new_test.xml"), Lock.READ_LOCK);
+			DocumentImpl doc = broker.getXMLResource(
+					XmldbURI.ROOT_COLLECTION_URI.append("test/new_test.xml"),
+					Lock.READ_LOCK);
 			assertNotNull("Document should not be null", doc);
 			String data = serializer.serialize(doc);
 			assertNotNull(data);
 			System.out.println(data);
 			doc.getUpdateLock().release(Lock.READ_LOCK);
-	    } catch (Exception e) {            
-	        fail(e.getMessage()); 			
+		} catch (Exception e) {
+			fail(e.getMessage());
 		} finally {
 			pool.release(broker);
 		}
 	}
 
+	@Test
 	public void testStoreAborted() {
 		BrokerPool.FORCE_CORRUPTION = true;
 		BrokerPool pool = null;
@@ -135,21 +150,26 @@ public class CopyResourceTest extends TestCase {
 			assertNotNull(transaction);
 			System.out.println("Transaction started ...");
 
-			Collection root = broker.getOrCreateCollection(transaction,	XmldbURI.ROOT_COLLECTION_URI.append("test"));
+			Collection root = broker.getOrCreateCollection(transaction,
+					XmldbURI.ROOT_COLLECTION_URI.append("test"));
 			assertNotNull(root);
 			broker.saveCollection(transaction, root);
 
-			Collection test2 = broker.getOrCreateCollection(transaction, XmldbURI.ROOT_COLLECTION_URI.append("test/test2"));
+			Collection test2 = broker.getOrCreateCollection(transaction,
+					XmldbURI.ROOT_COLLECTION_URI.append("test/test2"));
 			assertNotNull(test2);
 			broker.saveCollection(transaction, test2);
 
-                        String existHome = System.getProperty("exist.home");
-                        File existDir = existHome==null ? new File(".") : new File(existHome);
-			File f = new File(existDir,"samples/shakespeare/r_and_j.xml");
+			String directory = "samples/shakespeare/r_and_j.xml";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
 			assertNotNull(f);
-			IndexInfo info = test2.validateXMLResource(transaction, broker, XmldbURI.create("test2.xml"), new InputSource(f.toURI().toASCIIString()));
+			IndexInfo info = test2.validateXMLResource(transaction, broker,
+					XmldbURI.create("test2.xml"), new InputSource(f.toURI()
+							.toASCIIString()));
 			assertNotNull(info);
-			test2.store(transaction, broker, info, new InputSource(f.toURI().toASCIIString()), false);
+			test2.store(transaction, broker, info, new InputSource(f.toURI()
+					.toASCIIString()), false);
 
 			transact.commit(transaction);
 			System.out.println("Transaction commited ...");
@@ -157,23 +177,26 @@ public class CopyResourceTest extends TestCase {
 			transaction = transact.beginTransaction();
 			System.out.println("Transaction started ...");
 
-			broker.copyResource(transaction, info.getDocument(), root, XmldbURI.create("new_test2.xml"));
+			broker.copyResource(transaction, info.getDocument(), root,
+					XmldbURI.create("new_test2.xml"));
 			broker.saveCollection(transaction, root);
-			
-//			Don't commit...
+
+			// Don't commit...
 			pool.getTransactionManager().getJournal().flushToLog(true);
 			System.out.println("Transaction interrupted ...");
-	    } catch (Exception e) {            
-	        fail(e.getMessage());			
+		} catch (Exception e) {
+			fail(e.getMessage());
 		} finally {
-			if (pool != null) pool.release(broker);
+			if (pool != null)
+				pool.release(broker);
 		}
 	}
 
+	@Test
 	public void testReadAborted() {
 		BrokerPool.FORCE_CORRUPTION = false;
 		BrokerPool pool = null;
-		DBBroker broker = null;		
+		DBBroker broker = null;
 		try {
 			System.out.println("testReadAborted() ...\n");
 			pool = startDB();
@@ -183,17 +206,21 @@ public class CopyResourceTest extends TestCase {
 			Serializer serializer = broker.getSerializer();
 			serializer.reset();
 
-			DocumentImpl doc = broker.getXMLResource(XmldbURI.ROOT_COLLECTION_URI.append("test/test2/test2.xml"),	Lock.READ_LOCK);
+			DocumentImpl doc = broker
+					.getXMLResource(XmldbURI.ROOT_COLLECTION_URI
+							.append("test/test2/test2.xml"), Lock.READ_LOCK);
 			assertNotNull("Document should not be null", doc);
 			String data = serializer.serialize(doc);
 			assertNotNull(data);
 			System.out.println(data);
 			doc.getUpdateLock().release(Lock.READ_LOCK);
 
-			doc = broker.getXMLResource(XmldbURI.ROOT_COLLECTION_URI.append("test/new_test2.xml"), Lock.READ_LOCK);
+			doc = broker.getXMLResource(
+					XmldbURI.ROOT_COLLECTION_URI.append("test/new_test2.xml"),
+					Lock.READ_LOCK);
 			assertNull("Document should not exist", doc);
-	    } catch (Exception e) {            
-	        fail(e.getMessage());  			
+		} catch (Exception e) {
+			fail(e.getMessage());
 		} finally {
 			pool.release(broker);
 		}
@@ -204,13 +231,14 @@ public class CopyResourceTest extends TestCase {
 			Configuration config = new Configuration();
 			BrokerPool.configure(1, 5, config);
 			return BrokerPool.getInstance();
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 		return null;
 	}
-
-	protected void tearDown() {
+	
+	@After
+	public void tearDown() {
 		BrokerPool.stopAll(false);
 	}
 }

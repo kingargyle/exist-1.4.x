@@ -24,7 +24,9 @@ package org.exist.xmldb.concurrent;
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.MultiResourcesAction;
 import org.exist.xmldb.concurrent.action.XQueryAction;
+import org.junit.Before;
 import org.xmldb.api.base.Collection;
+import static org.junit.Assert.*;
 
 /**
  * @author wolf
@@ -40,11 +42,7 @@ public class ConcurrentResourceTest2 extends ConcurrentTestBase {
     private final static String QUERY1 =
         "declare default element namespace 'http://www.loc.gov/mods/v3';" +
         "<result>{for $t in distinct-values(\"" + DBBroker.ROOT_COLLECTION + "\")//mods/subject/topic) order by $t return <topic>{$t}</topic>}</result>";
-    
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(ConcurrentResourceTest2.class);
-    }
-    
+        
     /**
      * 
      * 
@@ -57,7 +55,8 @@ public class ConcurrentResourceTest2 extends ConcurrentTestBase {
     /* (non-Javadoc)
      * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#setUp()
      */
-    protected void setUp() {
+    @Before
+    public void setUp() {
     	try {
 	        super.setUp();	        
 	        Collection c1 = DBUtils.addCollection(getTestCollection(), "C1-C2");

@@ -24,7 +24,9 @@ package org.exist.xmldb.concurrent;
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.ReplaceResourceAction;
 import org.exist.xmldb.concurrent.action.RetrieveResourceAction;
+import org.junit.Before;
 import org.xmldb.api.base.Collection;
+import static org.junit.Assert.*;
 
 /**
  * Test concurrent acess to resources.
@@ -34,11 +36,7 @@ import org.xmldb.api.base.Collection;
 public class ConcurrentResourceTest extends ConcurrentTestBase {
 
 	private final static String URI = "xmldb:exist://" + DBBroker.ROOT_COLLECTION;
-	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ConcurrentResourceTest.class);
-	}
-	
+		
 	/**
      * 
      * 
@@ -51,7 +49,8 @@ public class ConcurrentResourceTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#setUp()
 	 */
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		try {
 			super.setUp();		
 			Collection c1 = DBUtils.addCollection(getTestCollection(), "C1-C2");
@@ -72,7 +71,8 @@ public class ConcurrentResourceTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#tearDown()
 	 */
-	protected void tearDown() {
+	@Before
+	public void tearDown() {
 		super.tearDown();
 	}
 }

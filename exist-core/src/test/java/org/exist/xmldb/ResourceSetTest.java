@@ -7,11 +7,13 @@ import junit.framework.TestCase;
 import org.xmldb.api.*;
 import org.xmldb.api.base.*;
 import org.xmldb.api.modules.*;
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
-public class ResourceSetTest {
+public class ResourceSetTest extends AbstractDBTest {
 
 	String XPathPrefix;
 	String query1;
@@ -22,8 +24,9 @@ public class ResourceSetTest {
 	private final static String DRIVER = "org.exist.xmldb.DatabaseImpl";
 
 	@Before
-	public void setUp() throws XMLDBException {
+	public void setUp() throws Exception {
 		try {
+			cleanUp();
 			// initialize driver
 			Class cl = Class.forName(DRIVER);
 			Database database = (Database) cl.newInstance();
@@ -45,6 +48,7 @@ public class ResourceSetTest {
 	}
 
 	@Test
+	@Ignore("Missing Setup for loading data into db")
 	public void testIntersection() throws Exception {
 		// try to get collection
 		Collection testCollection = DatabaseManager

@@ -24,6 +24,7 @@ package org.exist.xmldb;
 
 import java.io.File;
 
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.DBUtils;
 import org.junit.After;
@@ -42,7 +43,7 @@ import org.xmldb.api.base.ResourceSet;
  * 
  * @author wolf
  */
-public class ShutdownTest {
+public class ShutdownTest extends AbstractDBTest {
 
 	private final static String URI = "xmldb:exist://"
 			+ DBBroker.ROOT_COLLECTION;
@@ -65,7 +66,6 @@ public class ShutdownTest {
 	private String[] wordList;
 
 	@Test
-	@Ignore("Has problems running as part of the suite, may need to run separately.")
 	public void testShutdown() throws Exception {
 		for (int i = 0; i < 50; i++) {
 			System.out.println("Starting the database ...");

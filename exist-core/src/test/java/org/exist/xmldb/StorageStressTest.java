@@ -25,26 +25,26 @@ import java.io.File;
 import java.net.BindException;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
+import static org.junit.Assert.*;
 
 import org.exist.storage.DBBroker;
+import org.exist.AbstractDBTest;
 import org.exist.StandaloneServer;
 import org.exist.xmldb.concurrent.DBUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.mortbay.util.MultiException;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
 import org.xmldb.api.base.Resource;
-import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.modules.CollectionManagementService;
-import org.xmldb.api.modules.XMLResource;
 
 /**
  * @author ???
  * @author Pierrick Brihaye <pierrick.brihaye@free.fr>
  */
-public class StorageStressTest extends TestCase {
+public class StorageStressTest extends AbstractDBTest {
 
 	private static StandaloneServer server = null;
 	//TODO : why a remote test ?
@@ -52,20 +52,11 @@ public class StorageStressTest extends TestCase {
 	//protected final static String URI = "xmldb:exist://";    
     public final static String DB_DRIVER = "org.exist.xmldb.DatabaseImpl";
     private final static String COLLECTION_NAME = "unit-testing-collection";
-    
-    private final static String CONFIG =
-        "<collection xmlns=\"http://exist-db.org/collection-config/1.0\">" + 
-        "   <index xmlns:x=\"http://www.foo.com\" xmlns:xx=\"http://test.com\">" + 
-        "       <fulltext default=\"all\" attributes=\"true\">" +  
-        "       </fulltext>" + 
-        "       <create path=\"//ELEMENT-1/@attribute-1\" type=\"xs:string\"/>" +
-        "   </index>" + 
-        "</collection>";
-    
+        
     private Collection collection = null;
     
-    public void testStore() {
-    	try {
+    @Test
+    public void testStore() throws Exception {
 	        String[] wordList = DBUtils.wordList(collection);
 	        long start = System.currentTimeMillis();
 	        for (int i = 0; i < 30000; i++) {
@@ -77,20 +68,18 @@ public class StorageStressTest extends TestCase {
 	            f.delete();
 	        }
 	        System.out.println("Indexing took " + (System.currentTimeMillis() - start));
-        } catch (Exception e) {            
-            fail(e.getMessage()); 
-        }	        
     }
     
-    protected void setUp() {
+    @Before
+    public void setUp() throws Exception {
     	//Don't worry about closing the server : the shutdown hook will do the job
     	initServer();
         setUpRemoteDatabase();
     }
     
-	private void initServer() {
-		try {
+	private void initServer() throws Exception {
 			if (server == null) {
+				cleanUp();
 				server = new StandaloneServer();
 				if (!server.isStarted()) {			
 					try {				
@@ -115,9 +104,6 @@ public class StorageStressTest extends TestCase {
 					}
 				}
 			}
-        } catch (Exception e) {            
-            fail(e.getMessage()); 
-        }			
 	}    
     
     protected void setUpRemoteDatabase() {
@@ -138,9 +124,9 @@ public class StorageStressTest extends TestCase {
 	            this.collection = childCollection;
 	        }
 	        
-                String existHome = System.getProperty("exist.home");
-                File existDir = existHome==null ? new File(".") : new File(existHome);
-	        File f = new File(existDir,"samples/shakespeare/hamlet.xml");
+	   		String directory = "samples/shakespeare/hamlet.xml";
+	   		File f = new File(ClassLoader.getSystemClassLoader()
+	   				.getResource(directory).toURI().toURL().getFile());
 	        Resource res = collection.createResource("test1.xml", "XMLResource");
 	        res.setContent(f);
 	        collection.storeResource(res);
@@ -153,9 +139,4 @@ public class StorageStressTest extends TestCase {
         }	        
     }
     
-    public static void main(String[] args) {
-        TestRunner.run(StorageStressTest.class);
-		//Explicit shutdown for the shutdown hook
-		System.exit(0);		
-   }
 }

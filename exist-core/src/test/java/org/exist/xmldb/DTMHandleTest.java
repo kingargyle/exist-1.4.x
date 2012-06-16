@@ -9,7 +9,9 @@ package org.exist.xmldb;
 import static org.junit.Assert.*;
 
 import org.xmldb.api.base.CompiledExpression;
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Node;
@@ -29,13 +31,18 @@ import junit.framework.TestCase;
  * @version 1.0
  */
 
-public class DTMHandleTest {
+public class DTMHandleTest extends AbstractDBTest {
 	
 	/** eXist database url */
 	static final String eXistUrl ="xmldb:exist://";
 
 	/** eXist configuration file */
 	static final String eXistConf = "C:\\Documents and Settings\\Tobias Wunden\\My Documents\\Projects\\Varia\\Test\\conf.xml";
+	
+	@Before
+	public void setUp() throws Exception {
+		cleanUp();
+	}
 	
 	/**
 	 * Test for the TreeLevelOrder function. This test
@@ -47,7 +54,7 @@ public class DTMHandleTest {
 	 * </ul>
 	 */
 	@Test
-	@Ignore("Does not work.")
+	@Ignore
 	public final void testTreeLevelOrder() {
 		Database eXist = null;
 		String document = "survey.xml";

@@ -17,7 +17,7 @@
             <version>2.12</version>
             <configuration>
                <includes>
-                  <include>**/org/exist/xmldb/*Test.java</include>
+                  <include>**/*Test.java</include>
                </includes>
                <excludes>
                   <exclude>**/All*.java</exclude>
@@ -26,6 +26,7 @@
                <systemPropertyVariables>
                   <exist.home>${basedir}</exist.home>
                </systemPropertyVariables>
+              <forkMode>always</forkMode>
             </configuration>
          </plugin>
       </plugins>

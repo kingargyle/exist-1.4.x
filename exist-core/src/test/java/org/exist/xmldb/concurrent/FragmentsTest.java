@@ -23,19 +23,12 @@ package org.exist.xmldb.concurrent;
 
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.CreateCollectionAction;
-import org.exist.xmldb.concurrent.action.ReplaceResourceAction;
 import org.exist.xmldb.concurrent.action.XQueryAction;
-import org.exist.xmldb.concurrent.action.XQueryUpdateAction;
-import org.xmldb.api.base.XMLDBException;
+import org.junit.After;
+import org.junit.Before;
+import static org.junit.Assert.*;
 
 public class FragmentsTest extends ConcurrentTestBase {
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(FragmentsTest.class);
-    }
 
     private final static String URI = "xmldb:exist://localhost:8080/exist/xmlrpc" + DBBroker.ROOT_COLLECTION;
     
@@ -51,8 +44,9 @@ public class FragmentsTest extends ConcurrentTestBase {
     public FragmentsTest(String name) {
         super(name, URI, "C1");
     }
-    
-    protected void setUp() {
+
+    @Before
+    public void setUp() {
         try {
             super.setUp();
             
@@ -67,7 +61,8 @@ public class FragmentsTest extends ConcurrentTestBase {
     /* (non-Javadoc)
      * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#tearDown()
      */
-    protected void tearDown() {
+    @After
+    public void tearDown() {
 //        try {
 //            DBUtils.shutdownDB(URI);
 //        } catch (XMLDBException e) {

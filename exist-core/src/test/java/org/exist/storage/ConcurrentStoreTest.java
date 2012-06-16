@@ -24,9 +24,7 @@ package org.exist.storage;
 import java.io.File;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
-
+import org.exist.AbstractDBTest;
 import org.exist.collections.Collection;
 import org.exist.collections.IndexInfo;
 import org.exist.dom.DocumentImpl;
@@ -36,17 +34,18 @@ import org.exist.storage.txn.Txn;
 import org.exist.util.Configuration;
 import org.exist.util.XMLFilenameFilter;
 import org.exist.xmldb.XmldbURI;
+import org.junit.After;
+import org.junit.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ConcurrentStoreTest extends TestCase {
+import static org.junit.Assert.*;
+
+public class ConcurrentStoreTest extends AbstractDBTest {
 	
-    public static void main(String[] args) {
-        TestRunner.run(ConcurrentStoreTest.class);
-    }
     
     //TODO : revisit !
-    private static String directory = "/home/wolf/xml/shakespeare";
+    private static String directory = System.getProperty("java.io.tmpdir") + "/wolf/xml/shakespeare";
     private static XmldbURI TEST_COLLECTION_URI = XmldbURI.ROOT_COLLECTION_URI.append("test");
     
     private static File dir = new File(directory);
@@ -54,6 +53,7 @@ public class ConcurrentStoreTest extends TestCase {
     private BrokerPool pool;
     private Collection test, test2;
     
+    @Test
     public synchronized void testStore() {
     	try {
 	        BrokerPool.FORCE_CORRUPTION = true;
@@ -75,6 +75,7 @@ public class ConcurrentStoreTest extends TestCase {
 	    }
     }
     
+    @Test
     public void testRead() {
         BrokerPool.FORCE_CORRUPTION = false;
         pool = startDB();
@@ -136,7 +137,8 @@ public class ConcurrentStoreTest extends TestCase {
         return null;
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         BrokerPool.stopAll(false);
     }
     

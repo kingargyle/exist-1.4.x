@@ -27,6 +27,7 @@ import java.io.Writer;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
+import org.exist.AbstractDBTest;
 import org.exist.numbering.NodeId;
 import org.exist.numbering.NodeIdFactory;
 import org.exist.security.SecurityManager;
@@ -42,17 +43,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.*;
+
 /**
  * Tests transaction management and basic recovery for the BTree base class.
  * 
  * @author wolf
  *
  */
-public class BTreeRecoverTest extends TestCase {
-
-    public static void main(String[] args) {
-        TestRunner.run(BTreeRecoverTest.class);
-    }
+public class BTreeRecoverTest extends AbstractDBTest {
 
     private BrokerPool pool;
     private int count = 0;

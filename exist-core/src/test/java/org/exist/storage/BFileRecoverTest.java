@@ -24,9 +24,7 @@ package org.exist.storage;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
-
+import org.exist.AbstractDBTest;
 import org.exist.security.SecurityManager;
 import org.exist.storage.btree.Value;
 import org.exist.storage.index.BFile;
@@ -35,19 +33,21 @@ import org.exist.storage.txn.TransactionManager;
 import org.exist.storage.txn.Txn;
 import org.exist.util.Configuration;
 import org.exist.util.FixedByteArray;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author wolf
  *
  */
-public class BFileRecoverTest extends TestCase {
-
-    public static void main(String[] args) {
-        TestRunner.run(BFileRecoverTest.class);
-    }
+public class BFileRecoverTest extends AbstractDBTest {
     
     private BrokerPool pool;
     
+    @Test
     public void testAdd() {
         TransactionManager mgr = pool.getTransactionManager();
         DBBroker broker = null;
@@ -86,6 +86,7 @@ public class BFileRecoverTest extends TestCase {
         }
     }
     
+    @Test
     public void testRead() {
         BrokerPool.FORCE_CORRUPTION = false;
         DBBroker broker = null;
@@ -112,7 +113,8 @@ public class BFileRecoverTest extends TestCase {
         }
     }
     
-    protected void setUp() {
+    @Before
+    public void setUp() {
         try {
             Configuration config = new Configuration();
             BrokerPool.configure(1, 5, config);
@@ -122,7 +124,8 @@ public class BFileRecoverTest extends TestCase {
         }
     }
 
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         BrokerPool.stopAll(false);
     }
 

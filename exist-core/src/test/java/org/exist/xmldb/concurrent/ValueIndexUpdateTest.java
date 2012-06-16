@@ -24,6 +24,8 @@ package org.exist.xmldb.concurrent;
 import org.exist.collections.CollectionConfiguration;
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.ValueAppendAction;
+import org.junit.Assert;
+import org.junit.Before;
 
 
 
@@ -44,22 +46,20 @@ public class ValueIndexUpdateTest extends ConcurrentTestBase {
 	        "</exist:index>" +
         "</exist:collection>";
 	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ValueIndexUpdateTest.class);
-	}
 	
     public ValueIndexUpdateTest(String name) {
         super(name, URI, "C1");
     }
     
-    protected void setUp() {
+    @Before
+    public void setUp() {
     	try {
 			super.setUp();			
 			DBUtils.addXMLResource(getTestCollection(), CollectionConfiguration.DEFAULT_COLLECTION_CONFIG_FILE, XCONF);
 			DBUtils.addXMLResource(getTestCollection(), "R1.xml", "<items/>");			
 			addAction(new ValueAppendAction(URI + "/C1", "R1.xml"), 50, 0, 500);
     	} catch (Exception e) {            
-            fail(e.getMessage()); 
+            Assert.fail(e.getMessage()); 
         }				
 	}
 }

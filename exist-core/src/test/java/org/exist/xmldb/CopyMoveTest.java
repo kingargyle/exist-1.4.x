@@ -2,6 +2,7 @@ package org.exist.xmldb;
 
 import static org.junit.Assert.*;
 
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -13,7 +14,7 @@ import org.xmldb.api.modules.*;
 import junit.framework.TestCase;
 import junit.textui.TestRunner;
 
-public class CopyMoveTest {
+public class CopyMoveTest extends AbstractDBTest {
 
 	private final static String URI = "xmldb:exist://"
 			+ DBBroker.ROOT_COLLECTION;
@@ -80,6 +81,7 @@ public class CopyMoveTest {
 	@Before
 	public void setUp() throws Exception {
 		// initialize driver
+		cleanUp();
 		Database database = (Database) Class.forName(DRIVER).newInstance();
 		database.setProperty("create-database", "true");
 		DatabaseManager.registerDatabase(database);

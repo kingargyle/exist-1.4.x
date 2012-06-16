@@ -1,5 +1,6 @@
 package org.exist.fulltext;
 
+import org.exist.AbstractDBTest;
 import org.exist.TestUtils;
 import org.exist.collections.Collection;
 import org.exist.collections.CollectionConfigurationManager;
@@ -36,7 +37,7 @@ import org.exist.storage.TextSearchEngine;
 /**
  * Low-level tests for fulltext index configuration and index updates.
  */
-public class FTIndexTest {
+public class FTIndexTest extends AbstractDBTest {
 
     public final static String XML =
             "<content>" +

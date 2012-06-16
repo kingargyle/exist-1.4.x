@@ -24,20 +24,23 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.exist.AbstractDBTest;
 import org.exist.xmldb.concurrent.action.Action;
 import org.exist.xmldb.IndexQueryService;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Resource;
 import org.xmldb.api.modules.CollectionManagementService;
 
-import junit.framework.TestCase;
-
+import static org.junit.Assert.*;
 /**
  * Abstract base class for concurrent tests.
  * 
  * @author wolf
  */
-public abstract class ConcurrentTestBase extends TestCase {
+public abstract class ConcurrentTestBase extends AbstractDBTest {
 
     private static String COLLECTION_CONFIG =
         "<collection xmlns=\"http://exist-db.org/collection-config/1.0\">" +
@@ -64,7 +67,6 @@ public abstract class ConcurrentTestBase extends TestCase {
      * @param testCollection the name of the collection that will be created for the test.
      */
     public ConcurrentTestBase(String name, String uri, String testCollection) {
-        super(name);
         this.rootColURI = uri;
         this.testColName = testCollection;
     }
@@ -84,6 +86,7 @@ public abstract class ConcurrentTestBase extends TestCase {
         return testCol;
     }
 
+    @Test
     public void testConcurrent() {
         // start all threads
         for (int i = 0; i < actions.size(); i++) {
@@ -105,10 +108,8 @@ public abstract class ConcurrentTestBase extends TestCase {
         assertFalse(failed);
     }
 
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() {
+    @Before
+    public void setUp() {
         try {
             rootCol = DBUtils.setupDB(rootColURI);
             assertNotNull(rootCol);
@@ -122,19 +123,19 @@ public abstract class ConcurrentTestBase extends TestCase {
             testCol = DBUtils.addCollection(rootCol, testColName);
             assertNotNull(testCol);
 
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-            DBUtils.addXMLResource(rootCol, "biblio.rdf", new File(existDir,"samples/biblio.rdf"));
+	   		String directory = "samples/biblio.rdf";
+	   		File f = new File(ClassLoader.getSystemClassLoader()
+	   				.getResource(directory).toURI().toURL().getFile());
+            
+            DBUtils.addXMLResource(rootCol, "biblio.rdf", f);
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
         }
     }
 
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() {
+    @After
+    public void tearDown() {
         try {
             Resource res = rootCol.getResource("biblio.rdf");
             assertNotNull(res);

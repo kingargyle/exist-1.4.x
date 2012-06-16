@@ -25,6 +25,10 @@ import java.io.File;
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.IndexQueryService;
 import org.exist.xmldb.concurrent.action.RemoveAppendAction;
+import org.junit.After;
+import org.junit.Before;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -46,17 +50,14 @@ public class ConcurrentXUpdateTest extends ConcurrentTestBase {
     	"	</index>" + 
     	"</collection>";
 	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ConcurrentXUpdateTest.class);
-	}
-
 	private File tempFile;
 	
 	public ConcurrentXUpdateTest(String name) {
 		super(name, URI, "C1");
 	}
 	
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		try {
 			super.setUp();		
 			IndexQueryService idxConf = (IndexQueryService)
@@ -92,7 +93,8 @@ public class ConcurrentXUpdateTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#tearDown()
 	 */
-	protected void tearDown() {
+	@After
+	public void tearDown() {
 		try {
 			//super.tearDown();
 		    DBUtils.shutdownDB(URI);

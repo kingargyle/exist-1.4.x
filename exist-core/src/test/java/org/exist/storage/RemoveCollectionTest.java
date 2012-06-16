@@ -39,6 +39,7 @@ import org.exist.test.TestConstants;
 import org.exist.util.Configuration;
 import org.exist.util.LockException;
 import org.exist.xmldb.XmldbURI;
+import org.exist.AbstractDBTest;
 import org.exist.TestDataGenerator;
 import org.exist.EXistException;
 import org.xml.sax.InputSource;
@@ -55,7 +56,7 @@ import java.util.Iterator;
  * @author wolf
  *
  */
-public class RemoveCollectionTest {
+public class RemoveCollectionTest extends AbstractDBTest {
 
     private final static String generateXQ =
             "<book id=\"{$filename}\" n=\"{$count}\">" +

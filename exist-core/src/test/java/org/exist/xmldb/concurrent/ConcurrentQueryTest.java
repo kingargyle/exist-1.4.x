@@ -25,6 +25,9 @@ import java.io.File;
 
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.XQueryAction;
+import org.junit.After;
+import org.junit.Before;
+import static org.junit.Assert.*;
 
 /**
  * @author wolf
@@ -32,11 +35,7 @@ import org.exist.xmldb.concurrent.action.XQueryAction;
 public class ConcurrentQueryTest extends ConcurrentTestBase {
 
 	private final static String URI = "xmldb:exist://" + DBBroker.ROOT_COLLECTION;
-	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ConcurrentQueryTest.class);
-	}
-	
+		
 	private File tempFile;
 	
 	private XQueryAction action0, action1, action2;
@@ -53,7 +52,8 @@ public class ConcurrentQueryTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#setUp()
 	 */
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		try {
 			super.setUp();		
 			String[] wordList = DBUtils.wordList(rootCol);
@@ -92,7 +92,8 @@ public class ConcurrentQueryTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
      * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#tearDown()
      */
-    protected void tearDown() {    	
+	@After
+    public void tearDown() {    	
         super.tearDown();
         System.out.println("Avg. query time for " + action0.getQuery() + ": " + action0.avgExecTime());
         System.out.println("Avg. query time for " + action1.getQuery() + ": " + action1.avgExecTime());

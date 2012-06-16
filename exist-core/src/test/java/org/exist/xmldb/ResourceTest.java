@@ -9,13 +9,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
 import org.exist.util.Configuration;
 import org.exist.util.XMLFilenameFilter;
+import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -34,21 +37,13 @@ import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XPathQueryService;
 
-public class ResourceTest extends TestCase {
+public class ResourceTest extends AbstractDBTest {
 
 	private final static String URI = "xmldb:exist://"
 			+ DBBroker.ROOT_COLLECTION;
 	private final static String DRIVER = "org.exist.xmldb.DatabaseImpl";
 
-	/**
-	 * Constructor for XMLDBTest.
-	 * 
-	 * @param arg0
-	 */
-	public ResourceTest(String arg0) {
-		super(arg0);
-	}
-
+	@Test
 	public void testReadNonExistingResource() {
 		try {
 			Collection testCollection = DatabaseManager.getCollection(URI
@@ -64,6 +59,7 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testReadResource() {
 		try {
 			Collection testCollection = DatabaseManager.getCollection(URI
@@ -93,6 +89,7 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testReadDOM() {
 		try {
 			Collection testCollection = DatabaseManager.getCollection(URI
@@ -131,6 +128,7 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testSetContentAsSAX() {
 		try {
 			Collection testCollection = DatabaseManager.getCollection(URI
@@ -156,6 +154,7 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testSetContentAsDOM() {
 		try {
 			Collection testCollection = DatabaseManager.getCollection(URI
@@ -179,6 +178,7 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testQueryRemoveResource() {
 		Resource resource = null;
 		try {
@@ -213,6 +213,7 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAddRemove() {
 		try {
 			final String resourceID = "addremove.xml";
@@ -234,6 +235,7 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testAddRemoveAddWithIds() {
 		try {
 			final String resourceID = "removeWithIds;1.xml";
@@ -315,34 +317,30 @@ public class ResourceTest extends TestCase {
 				+ "<para>Paragraph2</para>" + "</test>";
 	}
 
-	protected void setUp() {
-		try {
-			// initialize driver
-			Class cl = Class.forName(DRIVER);
-			Database database = (Database) cl.newInstance();
-			database.setProperty("create-database", "true");
-			DatabaseManager.registerDatabase(database);
-			Collection root = DatabaseManager.getCollection(URI);
-			CollectionManagementService service = (CollectionManagementService) root
-					.getService("CollectionManagementService", "1.0");
-			assertNotNull(service);
-			Collection testCollection = service.createCollection("test");
-			assertNotNull(testCollection);
+	@Before
+	public void setUp() throws Exception {
+		// initialize driver
+		Class cl = Class.forName(DRIVER);
+		Database database = (Database) cl.newInstance();
+		database.setProperty("create-database", "true");
+		DatabaseManager.registerDatabase(database);
+		Collection root = DatabaseManager.getCollection(URI);
+		CollectionManagementService service = (CollectionManagementService) root
+				.getService("CollectionManagementService", "1.0");
+		assertNotNull(service);
+		Collection testCollection = service.createCollection("test");
+		assertNotNull(testCollection);
 
-			String directory = "samples/shakespeare";
-			File f = new File(ClassLoader.getSystemClassLoader()
-					.getResource(directory).toURI().toURL().getFile());
-			File files[] = f.listFiles(new XMLFilenameFilter());
+		String directory = "samples/shakespeare";
+		File f = new File(ClassLoader.getSystemClassLoader()
+				.getResource(directory).toURI().toURL().getFile());
+		File files[] = f.listFiles(new XMLFilenameFilter());
 
-			for (int i = 0; i < files.length; i++) {
-				XMLResource res = (XMLResource) testCollection.createResource(
-						files[i].getName(), "XMLResource");
-				res.setContent(files[i]);
-				testCollection.storeResource(res);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
+		for (int i = 0; i < files.length; i++) {
+			XMLResource res = (XMLResource) testCollection.createResource(
+					files[i].getName(), "XMLResource");
+			res.setContent(files[i]);
+			testCollection.storeResource(res);
 		}
 	}
 }

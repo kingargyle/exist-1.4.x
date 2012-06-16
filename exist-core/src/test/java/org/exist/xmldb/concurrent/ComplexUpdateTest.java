@@ -2,7 +2,9 @@ package org.exist.xmldb.concurrent;
 
 import org.exist.storage.DBBroker;
 import org.exist.xmldb.concurrent.action.ComplexUpdateAction;
+import org.junit.Before;
 import org.xmldb.api.modules.XMLResource;
+import static org.junit.Assert.*;
 
 /**
  * @author wolf
@@ -14,9 +16,6 @@ public class ComplexUpdateTest extends ConcurrentTestBase {
 	private final static String XML =
 		"<TEST><USER-SESSION-DATA version=\"0\"/></TEST>";
 	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ComplexUpdateTest.class);
-	}
 	
 	/**
      * 
@@ -30,7 +29,8 @@ public class ComplexUpdateTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#setUp()
 	 */
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		try {
 			super.setUp();			
 			XMLResource res = (XMLResource)getTestCollection().createResource("R01.xml", "XMLResource");
@@ -46,7 +46,8 @@ public class ComplexUpdateTest extends ConcurrentTestBase {
 	/* (non-Javadoc)
 	 * @see org.exist.xmldb.test.concurrent.ConcurrentTestBase#tearDown()
 	 */
-	protected void tearDown() {
+	@Before
+	public void tearDown() {
 		try {
 			DBUtils.shutdownDB(rootColURI);
 		} catch (Exception e) {            

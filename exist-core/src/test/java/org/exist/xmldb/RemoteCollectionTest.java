@@ -4,18 +4,20 @@ $Id$
  */
 package org.exist.xmldb;
 
-import java.io.File;
 import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static org.junit.Assert.*;
 
-import org.apache.commons.io.FileUtils;
+
 import org.exist.StandaloneServer;
 import org.exist.storage.DBBroker;
-import org.exist.util.Configuration;
 import org.exist.validation.service.RemoteValidationService;
 import org.exist.xquery.util.URIUtils;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.mortbay.util.MultiException;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -34,16 +36,14 @@ public class RemoteCollectionTest extends RemoteDBTest {
 	private final static String XML_CONTENT = "<xml/>";
 	private final static String BINARY_CONTENT = "TEXT";
 
-	public RemoteCollectionTest(String name) {
-		super(name);
-	}
-
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		initServer();
 		setUpRemoteDatabase();
 	}
 
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		removeCollection();
 	}
 
@@ -77,6 +77,7 @@ public class RemoteCollectionTest extends RemoteDBTest {
 		}
 	}
 
+	@Test
 	public void testGetServices() throws Exception {
 		Service[] services = getCollection().getServices();
 		assertEquals(7, services.length);
@@ -91,15 +92,18 @@ public class RemoteCollectionTest extends RemoteDBTest {
 		assertEquals(RemoteValidationService.class, services[6].getClass());
 	}
 
+	@Test
 	public void testIsRemoteCollection() throws Exception {
 		assertTrue(getCollection().isRemoteCollection());
 	}
 
+	@Test
 	public void testGetPath() throws Exception {
 		assertEquals(DBBroker.ROOT_COLLECTION + "/" + getTestCollectionName(),
 				URIUtils.urlDecodeUtf8(getCollection().getPath()));
 	}
 
+	@Test
 	public void testCreateResource() throws Exception {
 		Collection collection = getCollection();
 		{ // XML resource:
@@ -120,6 +124,7 @@ public class RemoteCollectionTest extends RemoteDBTest {
 		}
 	}
 
+	@Test
 	public void testGetNonExistentResource() throws Exception {
 		System.out.println("Retrieving non-existing resource");
 		Collection collection = getCollection();
@@ -127,6 +132,7 @@ public class RemoteCollectionTest extends RemoteDBTest {
 		assertNull(resource);
 	}
 
+	@Test
 	public void testListResources() throws Exception {
 		ArrayList xmlNames = new ArrayList();
 		xmlNames.add("xml1");
@@ -153,6 +159,7 @@ public class RemoteCollectionTest extends RemoteDBTest {
 	 * Trying to access a collection where the parent collection does not exist
 	 * caused NullPointerException on DatabaseManager.getCollection() method.
 	 */
+	@Test
 	public void testParent() throws Exception {
 		Collection c = DatabaseManager.getCollection(URI
 				+ DBBroker.ROOT_COLLECTION, "admin", null);

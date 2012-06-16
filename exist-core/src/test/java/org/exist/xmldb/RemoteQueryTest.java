@@ -26,12 +26,17 @@ import java.net.BindException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.exist.AbstractDBTest;
 import org.exist.StandaloneServer;
 import org.exist.storage.DBBroker;
 import org.exist.test.TestConstants;
 import org.exist.util.MimeType;
 import org.exist.xmlrpc.RpcAPI;
 import org.exist.xmlrpc.XmlRpcTest;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mortbay.util.MultiException;
 import org.w3c.dom.Node;
 import org.xmldb.api.DatabaseManager;
@@ -46,10 +51,10 @@ import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XPathQueryService;
 import org.xmldb.api.modules.XQueryService;
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
+import static org.junit.Assert.*;
 
-public class RemoteQueryTest extends TestCase {
+
+public class RemoteQueryTest extends AbstractDBTest {
 
 	private static String uri = "xmldb:exist://localhost:8088/xmlrpc" + DBBroker.ROOT_COLLECTION;
 	
@@ -58,6 +63,8 @@ public class RemoteQueryTest extends TestCase {
 	private Collection testCollection;
 	private Collection xmlrpcCollection;
 	
+	@Test
+	@Ignore
 	public void testResourceSet() {
 		try {
 			String query = "//SPEECH[SPEAKER = 'HAMLET']";
@@ -80,6 +87,8 @@ public class RemoteQueryTest extends TestCase {
 		}
 	}
 	
+	@Test
+	@Ignore
 	public void testExternalVar() {
 		try {
 			String query = XmlRpcTest.QUERY_MODULE_DATA;
@@ -105,8 +114,10 @@ public class RemoteQueryTest extends TestCase {
 			e.printStackTrace();
 			fail(e.getMessage());
 		}
-	}
-	protected void setUp() {
+	}	
+	
+	@Before
+	public void setUp() {
 		if (uri.startsWith("xmldb:exist://localhost"))
 			initServer();
 		try {
@@ -184,7 +195,8 @@ public class RemoteQueryTest extends TestCase {
 		}           
 	}   
 	
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		try {
 			if (!((CollectionImpl) testCollection).isRemoteCollection()) {
 				DatabaseInstanceManager dim =
@@ -203,7 +215,4 @@ public class RemoteQueryTest extends TestCase {
 		}
 	}
 	
-	public static void main(String[] args) {
-		TestRunner.run(RemoteQueryTest.class);
-	}
 }

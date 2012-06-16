@@ -74,9 +74,10 @@ public class MoveResourceTest extends TestCase {
 			assertNotNull(test2);
 			broker.saveCollection(transaction, test2);
 
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-			File f = new File(existDir,"samples/shakespeare/r_and_j.xml");
+			String directory = "samples/shakespeare/r_and_j.xml";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
+			
 			assertNotNull(f);
 			IndexInfo info = test2.validateXMLResource(transaction, broker, TestConstants.TEST_XML_URI, new InputSource(f.toURI().toASCIIString()));
 			assertNotNull(info);
@@ -161,9 +162,10 @@ public class MoveResourceTest extends TestCase {
 			assertNotNull(test2);
 			broker.saveCollection(transaction, test2);
 
-            String existHome = System.getProperty("exist.home");
-            File existDir = existHome==null ? new File(".") : new File(existHome);
-			File f = new File(existDir,"samples/shakespeare/r_and_j.xml");
+			String directory = "samples/shakespeare/r_and_j.xml";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
+			
 			assertNotNull(f);
             IndexInfo info = test2.validateXMLResource(transaction, broker, XmldbURI.create("new_test2.xml"),
 					new InputSource(f.toURI().toASCIIString()));
@@ -228,7 +230,7 @@ public void testReadAborted() {
 	    }
 	}
 
-	public void testXMLDBStore() throws XMLDBException {
+	public void testXMLDBStore() throws Exception {
 		BrokerPool.FORCE_CORRUPTION = true;
 	    BrokerPool pool = startDB();
 
@@ -242,9 +244,9 @@ public void testReadAborted() {
 	    if (test2 == null)
 	    	test2 = mgr.createCollection("test2");
 
-	    String existHome = System.getProperty("exist.home");
-        File existDir = existHome==null ? new File(".") : new File(existHome);
-        File f = new File(existDir,"samples/shakespeare/r_and_j.xml");
+		String directory = "samples/shakespeare/r_and_j.xml";
+		File f = new File(ClassLoader.getSystemClassLoader()
+				.getResource(directory).toURI().toURL().getFile());
         assertNotNull(f);
 	    Resource res = test2.createResource("test3.xml", "XMLResource");
 	    res.setContent(f);
