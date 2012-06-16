@@ -21,12 +21,14 @@
  */
 package org.exist.xmldb;
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
 import org.exist.util.MimeTable;
 import org.exist.util.MimeType;
 import org.exist.util.SingleInstanceConfiguration;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
@@ -42,11 +44,7 @@ import java.io.FileOutputStream;
  * @author wolf
  * 
  */
-public class MultiDBTest extends TestCase {
-
-	public static void main(String[] args) {
-		TestRunner.run(MultiDBTest.class);
-	}
+public class MultiDBTest extends AbstractDBTest {
 
 	private final static int INSTANCE_COUNT = 5;
 
@@ -55,6 +53,7 @@ public class MultiDBTest extends TestCase {
 			+ "       <pool min=\"1\" max=\"5\" sync-period=\"120000\"/>"
 			+ "   </db-connection>" + "</exist>";
 
+	@Test
 	public void testStore() throws Exception {
 		for (int i = 0; i < INSTANCE_COUNT; i++) {
 			Collection root = DatabaseManager.getCollection("xmldb:test" + i
@@ -66,10 +65,9 @@ public class MultiDBTest extends TestCase {
 				test = service.createCollection("test");
 			}
 
-			String existHome = System.getProperty("exist.home");
-			File existDir = existHome == null ? new File(".") : new File(
-					existHome);
-			File samples = new File(existDir, "samples/shakespeare");
+			File samples = new File(ClassLoader.getSystemClassLoader()
+					.getResource("samples/shakespeare").toURI().toURL()
+					.getFile());
 			File[] files = samples.listFiles();
 			MimeTable mimeTab = MimeTable.getInstance();
 			for (int j = 0; j < files.length; j++) {
@@ -82,37 +80,31 @@ public class MultiDBTest extends TestCase {
 		}
 	}
 
-	protected static void loadFile(Collection collection, String path) {
-		try {
-			// create new XMLResource; an id will be assigned to the new
-			// resource
-			XMLResource document = (XMLResource) collection.createResource(
-					path.substring(path.lastIndexOf(File.separatorChar)),
-					"XMLResource");
-			document.setContent(new File(path));
-			collection.storeResource(document);
-		} catch (Exception e) {
-			fail(e.getMessage());
-		}
+	protected static void loadFile(Collection collection, String path)
+			throws Exception {
+		// create new XMLResource; an id will be assigned to the new
+		// resource
+		XMLResource document = (XMLResource) collection.createResource(
+				path.substring(path.lastIndexOf(File.separatorChar)),
+				"XMLResource");
+		document.setContent(new File(path));
+		collection.storeResource(document);
 	}
 
-	private static void doQuery(Collection collection, String query) {
-		try {
-			XQueryService service = (XQueryService) collection.getService(
-					"XQueryService", "1.0");
-			ResourceSet result = service.query(query);
-			System.out.println("Found " + result.getSize() + " results.");
-			for (ResourceIterator i = result.getIterator(); i
-					.hasMoreResources();) {
-				String content = i.nextResource().getContent().toString();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			fail(e.getMessage());
+	private static void doQuery(Collection collection, String query)
+			throws Exception {
+		XQueryService service = (XQueryService) collection.getService(
+				"XQueryService", "1.0");
+		ResourceSet result = service.query(query);
+		System.out.println("Found " + result.getSize() + " results.");
+		for (ResourceIterator i = result.getIterator(); i.hasMoreResources();) {
+			String content = i.nextResource().getContent().toString();
 		}
-	}
+	}	
 
-	protected void setUp() {
+	@Before
+	public void setUp() throws Exception {
+		cleanUp();
 		String homeDir = SingleInstanceConfiguration.getPath();
 		if (homeDir == null)
 			homeDir = ".";
@@ -122,49 +114,42 @@ public class MultiDBTest extends TestCase {
 				+ File.separatorChar + "temp");
 		if (!testDir.canWrite())
 			testDir.mkdirs();
-		try {
-			// initialize database drivers
-			Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
-			for (int i = 0; i < INSTANCE_COUNT; i++) {
-				File dir = new File(testDir, "db" + i);
-				dir.mkdirs();
-				File conf = new File(dir, "conf.xml");
-				FileOutputStream os = new FileOutputStream(conf);
-				os.write(CONFIG.getBytes("UTF-8"));
-				os.close();
+		// initialize database drivers
+		Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
+		for (int i = 0; i < INSTANCE_COUNT; i++) {
+			File dir = new File(testDir, "db" + i);
+			dir.mkdirs();
+			File conf = new File(dir, "conf.xml");
+			FileOutputStream os = new FileOutputStream(conf);
+			os.write(CONFIG.getBytes("UTF-8"));
+			os.close();
 
-				Database database = (Database) cl.newInstance();
-				database.setProperty("create-database", "true");
-				database.setProperty("configuration", conf.getAbsolutePath());
-				database.setProperty("database-id", "test" + i);
-				DatabaseManager.registerDatabase(database);
-			}
-		} catch (Exception e) {
-			fail(e.getMessage());
+			Database database = (Database) cl.newInstance();
+			database.setProperty("create-database", "true");
+			database.setProperty("configuration", conf.getAbsolutePath());
+			database.setProperty("database-id", "test" + i);
+			DatabaseManager.registerDatabase(database);
 		}
 	}
 
-	protected void tearDown() {
-		try {
-			System.gc();
-			Runtime rt = Runtime.getRuntime();
-			long free = rt.freeMemory() / 1024;
-			long total = rt.totalMemory() / 1024;
-			for (int i = 0; i < INSTANCE_COUNT; i++) {
-				Collection root = DatabaseManager.getCollection("xmldb:test"
-						+ i + "://" + DBBroker.ROOT_COLLECTION, "admin", null);
-				CollectionManagementService service = (CollectionManagementService) root
-						.getService("CollectionManagementService", "1.0");
-				service.removeCollection("test");
+	@After
+	public void tearDown() throws Exception {
+		System.gc();
+		Runtime rt = Runtime.getRuntime();
+		long free = rt.freeMemory() / 1024;
+		long total = rt.totalMemory() / 1024;
+		for (int i = 0; i < INSTANCE_COUNT; i++) {
+			Collection root = DatabaseManager.getCollection("xmldb:test" + i
+					+ "://" + DBBroker.ROOT_COLLECTION, "admin", null);
+			CollectionManagementService service = (CollectionManagementService) root
+					.getService("CollectionManagementService", "1.0");
+			service.removeCollection("test");
 
-				DatabaseInstanceManager mgr = (DatabaseInstanceManager) root
-						.getService("DatabaseInstanceManager", "1.0");
-				mgr.shutdown();
-			}
-			System.out.println("Mem total: " + total + "K");
-			System.out.println("Mem free: " + free + "K");
-		} catch (Exception e) {
-			fail(e.getMessage());
+			DatabaseInstanceManager mgr = (DatabaseInstanceManager) root
+					.getService("DatabaseInstanceManager", "1.0");
+			mgr.shutdown();
 		}
+		System.out.println("Mem total: " + total + "K");
+		System.out.println("Mem free: " + free + "K");
 	}
 }

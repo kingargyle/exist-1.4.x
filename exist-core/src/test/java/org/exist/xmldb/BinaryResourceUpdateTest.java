@@ -21,7 +21,8 @@
  */
 package org.exist.xmldb;
 
-import org.xmldb.api.base.Database;
+import static org.junit.Assert.*;
+import org.xmldb.api.base.Database; 
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.XMLDBException;
 import org.xmldb.api.base.Resource;
@@ -30,10 +31,14 @@ import org.xmldb.api.modules.CollectionManagementService;
 import org.xmldb.api.modules.BinaryResource;
 import org.xmldb.api.modules.XMLResource;
 
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
 import org.exist.util.Configuration;
 import org.exist.util.DatabaseConfigurationException;
 import org.exist.util.XMLFilenameFilter;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.apache.log4j.BasicConfigurator;
 
@@ -44,7 +49,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 
-public class BinaryResourceUpdateTest extends TestCase {
+public class BinaryResourceUpdateTest extends AbstractDBTest {
 
 	private Database database;
 	private Collection testCollection;
@@ -75,6 +80,7 @@ public class BinaryResourceUpdateTest extends TestCase {
 
 	}
 
+	@Test
 	public void testUpdateBinary() throws Exception {
 		for (int i = 0; i < REPEAT; i++) {
 			BinaryResource binaryResource = (BinaryResource) testCollection
@@ -120,7 +126,8 @@ public class BinaryResourceUpdateTest extends TestCase {
 		}
 	}
 
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		// initialize driver
 		Class cl = Class.forName("org.exist.xmldb.DatabaseImpl");
 		database = (Database) cl.newInstance();
@@ -135,10 +142,8 @@ public class BinaryResourceUpdateTest extends TestCase {
 		assertNotNull(testCollection);
 	}
 
-	/*
-	 * @see TestCase#tearDown()
-	 */
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		CollectionManagementService service = (CollectionManagementService) testCollection
 				.getParentCollection().getService(
 						"CollectionManagementService", "1.0");
@@ -152,10 +157,5 @@ public class BinaryResourceUpdateTest extends TestCase {
 		database = null;
 
 		System.out.println("tearDown PASSED");
-	}
-
-	public static void main(String[] args) {
-		BasicConfigurator.configure();
-		TestRunner.run(BinaryResourceUpdateTest.class);
 	}
 }

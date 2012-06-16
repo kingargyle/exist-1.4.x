@@ -6,8 +6,12 @@
  */
 package org.exist.xmldb;
 
+import static org.junit.Assert.*;
+
 import org.xmldb.api.base.CompiledExpression;
 import org.exist.storage.DBBroker;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xmldb.api.DatabaseManager;
@@ -25,7 +29,7 @@ import junit.framework.TestCase;
  * @version 1.0
  */
 
-public class DTMHandleTest extends TestCase {
+public class DTMHandleTest {
 	
 	/** eXist database url */
 	static final String eXistUrl ="xmldb:exist://";
@@ -33,10 +37,6 @@ public class DTMHandleTest extends TestCase {
 	/** eXist configuration file */
 	static final String eXistConf = "C:\\Documents and Settings\\Tobias Wunden\\My Documents\\Projects\\Varia\\Test\\conf.xml";
 	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(DTMHandleTest.class);
-	}
-
 	/**
 	 * Test for the TreeLevelOrder function. This test
 	 * <ul>
@@ -46,6 +46,8 @@ public class DTMHandleTest extends TestCase {
 	 * <li>Accesses the document using DOM</li>
 	 * </ul>
 	 */
+	@Test
+	@Ignore("Does not work.")
 	public final void testTreeLevelOrder() {
 		Database eXist = null;
 		String document = "survey.xml";
@@ -95,7 +97,7 @@ public class DTMHandleTest extends TestCase {
 							
 							Node name = fieldChildren.item(f);
 							//String nameText = name.getTextContent();
-                                                        String nameText = TreeLevelOrderTest.textContent(name);
+                            String nameText = TreeLevelOrderTest.textContent(name);
 							assertNotNull("Failed to read existing field[" + 1 + "]/name/text()", nameText);
 						}
 					}

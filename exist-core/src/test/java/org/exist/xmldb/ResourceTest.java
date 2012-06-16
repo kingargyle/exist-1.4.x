@@ -36,39 +36,45 @@ import org.xmldb.api.modules.XPathQueryService;
 
 public class ResourceTest extends TestCase {
 
-	private final static String URI = "xmldb:exist://" + DBBroker.ROOT_COLLECTION;
+	private final static String URI = "xmldb:exist://"
+			+ DBBroker.ROOT_COLLECTION;
 	private final static String DRIVER = "org.exist.xmldb.DatabaseImpl";
 
 	/**
 	 * Constructor for XMLDBTest.
+	 * 
 	 * @param arg0
 	 */
 	public ResourceTest(String arg0) {
 		super(arg0);
 	}
-	
+
 	public void testReadNonExistingResource() {
 		try {
-			Collection testCollection = DatabaseManager.getCollection(URI + "/test");
+			Collection testCollection = DatabaseManager.getCollection(URI
+					+ "/test");
 			assertNotNull(testCollection);
 			Resource nonExistent = testCollection.getResource("12345.xml");
 			assertNull(nonExistent);
-		} catch(Exception e) {
-			System.out.println("testReadNonExistingResource(): Exception: " + e);
-            e.printStackTrace();
+		} catch (Exception e) {
+			System.out
+					.println("testReadNonExistingResource(): Exception: " + e);
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
-	
+
 	public void testReadResource() {
 		try {
-			Collection testCollection = DatabaseManager.getCollection(URI + "/test");
+			Collection testCollection = DatabaseManager.getCollection(URI
+					+ "/test");
 			assertNotNull(testCollection);
 			String[] resources = testCollection.listResources();
 			assertEquals(resources.length, testCollection.getResourceCount());
 
 			System.out.println("reading " + resources[0]);
-			XMLResource doc = (XMLResource) testCollection.getResource(resources[0]);
+			XMLResource doc = (XMLResource) testCollection
+					.getResource(resources[0]);
 			assertNotNull(doc);
 
 			System.out.println("testing XMLResource.getContentAsSAX()");
@@ -82,25 +88,27 @@ public class ResourceTest extends TestCase {
 			System.out.println("----------------------------------------");
 		} catch (Exception e) {
 			System.out.println("testReadResource(): Exception: " + e);
-            e.printStackTrace();
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
 
 	public void testReadDOM() {
 		try {
-			Collection testCollection = DatabaseManager.getCollection(URI + "/test");
+			Collection testCollection = DatabaseManager.getCollection(URI
+					+ "/test");
 			assertNotNull(testCollection);
 
-			XMLResource doc = (XMLResource) testCollection.getResource("r_and_j.xml");
+			XMLResource doc = (XMLResource) testCollection
+					.getResource("r_and_j.xml");
 			assertNotNull(doc);
 			Node n = doc.getContentAsDOM();
-            Element elem=null;
-            if ( n instanceof Element ) {
-                elem = (Element)n;
-            } else if ( n instanceof Document ) {
-                elem = ((Document)n).getDocumentElement();
-            }
+			Element elem = null;
+			if (n instanceof Element) {
+				elem = (Element) n;
+			} else if (n instanceof Document) {
+				elem = ((Document) n).getDocumentElement();
+			}
 			assertNotNull(elem);
 			assertEquals(elem.getNodeName(), "PLAY");
 			System.out.println("Root element: " + elem.getNodeName());
@@ -111,29 +119,28 @@ public class ResourceTest extends TestCase {
 				System.out.println("Child: " + node.getNodeName());
 				assertNotNull(node);
 				node = node.getFirstChild();
-				while(node != null) {
+				while (node != null) {
 					System.out.println("child: " + node.getNodeName());
 					node = node.getNextSibling();
 				}
 			}
 		} catch (XMLDBException e) {
-            System.out.println("testReadDOM(): Exception: " + e);
-            e.printStackTrace();
+			System.out.println("testReadDOM(): Exception: " + e);
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}
 
 	public void testSetContentAsSAX() {
 		try {
-			Collection testCollection = DatabaseManager.getCollection(URI + "/test");
+			Collection testCollection = DatabaseManager.getCollection(URI
+					+ "/test");
 			assertNotNull(testCollection);
 
-			XMLResource doc =
-				(XMLResource) testCollection.createResource("test.xml", "XMLResource");
-			String xml =
-				"<test><title>Title</title>"
-					+ "<para>Paragraph1</para>"
-					+ "<para>Paragraph2</para>"
+			XMLResource doc = (XMLResource) testCollection.createResource(
+					"test.xml", "XMLResource");
+			String xml = "<test><title>Title</title>"
+					+ "<para>Paragraph1</para>" + "<para>Paragraph2</para>"
 					+ "</test>";
 			ContentHandler handler = doc.setContentAsSAX();
 			SAXParserFactory saxFactory = SAXParserFactory.newInstance();
@@ -151,18 +158,20 @@ public class ResourceTest extends TestCase {
 
 	public void testSetContentAsDOM() {
 		try {
-			Collection testCollection = DatabaseManager.getCollection(URI + "/test");
+			Collection testCollection = DatabaseManager.getCollection(URI
+					+ "/test");
 			assertNotNull(testCollection);
 
-			XMLResource doc = (XMLResource) testCollection.createResource("dom.xml", "XMLResource");
-			String xml =
-				"<test><title>Title</title>"
-					+ "<para>Paragraph1</para>"
-					+ "<para>Paragraph2</para>"
+			XMLResource doc = (XMLResource) testCollection.createResource(
+					"dom.xml", "XMLResource");
+			String xml = "<test><title>Title</title>"
+					+ "<para>Paragraph1</para>" + "<para>Paragraph2</para>"
 					+ "</test>";
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory
+					.newInstance();
 			DocumentBuilder builder = docFactory.newDocumentBuilder();
-			Document dom = builder.parse(new InputSource(new StringReader(xml)));
+			Document dom = builder
+					.parse(new InputSource(new StringReader(xml)));
 			doc.setContentAsDOM(dom.getDocumentElement());
 			testCollection.storeResource(doc);
 		} catch (Exception e) {
@@ -172,42 +181,50 @@ public class ResourceTest extends TestCase {
 
 	public void testQueryRemoveResource() {
 		Resource resource = null;
-        try {
-        	Collection testCollection = DatabaseManager.getCollection(URI + "/test");
+		try {
+			Collection testCollection = DatabaseManager.getCollection(URI
+					+ "/test");
 			assertNotNull(testCollection);
-            String resourceName = "QueryTestPerson.xml";
-            String id = "test." + System.currentTimeMillis();
-            String content = "<?xml version='1.0'?><person id=\"" + id + "\"><name>Jason</name></person>";
-            resource = testCollection.createResource(resourceName, "XMLResource");
-            resource.setContent(content);
-            testCollection.storeResource(resource);
+			String resourceName = "QueryTestPerson.xml";
+			String id = "test." + System.currentTimeMillis();
+			String content = "<?xml version='1.0'?><person id=\"" + id
+					+ "\"><name>Jason</name></person>";
+			resource = testCollection.createResource(resourceName,
+					"XMLResource");
+			resource.setContent(content);
+			testCollection.storeResource(resource);
 
-            XPathQueryService service = (XPathQueryService) testCollection.getService("XPathQueryService", "1.0");
-            ResourceSet rs = service.query("/person[@id='" + id + "']");
+			XPathQueryService service = (XPathQueryService) testCollection
+					.getService("XPathQueryService", "1.0");
+			ResourceSet rs = service.query("/person[@id='" + id + "']");
 
-            for (ResourceIterator iterator = rs.getIterator(); iterator.hasMoreResources();) {
-                Resource r = iterator.nextResource();
-                System.err.println("Resource id=" + r.getId() + " xml=" + r.getContent());
-                testCollection.removeResource(r);
-                resource = null;
-            }
-        } catch (XMLDBException xe) {
-            System.err.println("Unexpected Exception occured: " + xe.getMessage());
-            xe.printStackTrace();
-        }
+			for (ResourceIterator iterator = rs.getIterator(); iterator
+					.hasMoreResources();) {
+				Resource r = iterator.nextResource();
+				System.err.println("Resource id=" + r.getId() + " xml="
+						+ r.getContent());
+				testCollection.removeResource(r);
+				resource = null;
+			}
+		} catch (XMLDBException xe) {
+			System.err.println("Unexpected Exception occured: "
+					+ xe.getMessage());
+			xe.printStackTrace();
+		}
 	}
-	
+
 	public void testAddRemove() {
 		try {
 			final String resourceID = "addremove.xml";
 
 			XMLResource created = addResource(resourceID, xmlForTest());
 			assertNotNull(created);
-			// need to test documents xml structure			
+			// need to test documents xml structure
 
 			XMLResource located = resourceForId(resourceID);
 			assertNotNull(located);
-			//assertEquals((String) created.getContent(), (String) located.getContent());
+			// assertEquals((String) created.getContent(), (String)
+			// located.getContent());
 
 			removeDocument(resourceID);
 			XMLResource locatedAfterRemove = resourceForId(resourceID);
@@ -229,13 +246,13 @@ public class ResourceTest extends TestCase {
 		}
 	}
 
-	private void removeDocument(String id) {		
+	private void removeDocument(String id) {
 		try {
 			XMLResource resource = resourceForId(id);
-	
+
 			if (null != resource) {
 				Collection collection = null;
-	
+
 				try {
 					collection = DatabaseManager.getCollection(URI + "/test");
 					collection.removeResource(resource);
@@ -243,9 +260,9 @@ public class ResourceTest extends TestCase {
 					closeCollection(collection);
 				}
 			}
-		} catch (Exception e) {			
+		} catch (Exception e) {
 			fail(e.getMessage());
-		}			
+		}
 	}
 
 	private XMLResource addResource(String id, String content) {
@@ -254,11 +271,12 @@ public class ResourceTest extends TestCase {
 
 		try {
 			collection = DatabaseManager.getCollection(URI + "/test");
-			result = (XMLResource) collection.createResource(id, XMLResource.RESOURCE_TYPE);
+			result = (XMLResource) collection.createResource(id,
+					XMLResource.RESOURCE_TYPE);
 			result.setContent(content);
 			collection.storeResource(result);
 		} catch (Exception e) {
-			fail(e.getMessage());					
+			fail(e.getMessage());
 		} finally {
 			closeCollection(collection);
 		}
@@ -274,11 +292,11 @@ public class ResourceTest extends TestCase {
 			collection = DatabaseManager.getCollection(URI + "/test");
 			result = (XMLResource) collection.getResource(id);
 		} catch (Exception e) {
-			fail(e.getMessage());	
+			fail(e.getMessage());
 		} finally {
 			closeCollection(collection);
 		}
-		
+
 		return result;
 	}
 
@@ -289,16 +307,14 @@ public class ResourceTest extends TestCase {
 			}
 		} catch (Exception e) {
 			fail(e.getMessage());
-		}			
+		}
 	}
 
 	private String xmlForTest() {
-		return "<test><title>Title</title>"
-			+ "<para>Paragraph1</para>"
-			+ "<para>Paragraph2</para>"
-			+ "</test>";
+		return "<test><title>Title</title>" + "<para>Paragraph1</para>"
+				+ "<para>Paragraph2</para>" + "</test>";
 	}
-	
+
 	protected void setUp() {
 		try {
 			// initialize driver
@@ -306,31 +322,27 @@ public class ResourceTest extends TestCase {
 			Database database = (Database) cl.newInstance();
 			database.setProperty("create-database", "true");
 			DatabaseManager.registerDatabase(database);
-            Collection root = DatabaseManager.getCollection(URI);
-            CollectionManagementService service =
-                (CollectionManagementService) root.getService(
-                    "CollectionManagementService",
-                    "1.0");
-            assertNotNull(service);
-            Collection testCollection = service.createCollection("test");
-            assertNotNull(testCollection);
-            
-            String directory = "samples/shakespeare";
-			File f = new File(ClassLoader.getSystemClassLoader().getResource(directory).toURI().toURL().getFile());
-            File files[] = f.listFiles(new XMLFilenameFilter());
+			Collection root = DatabaseManager.getCollection(URI);
+			CollectionManagementService service = (CollectionManagementService) root
+					.getService("CollectionManagementService", "1.0");
+			assertNotNull(service);
+			Collection testCollection = service.createCollection("test");
+			assertNotNull(testCollection);
 
-            for (int i = 0; i < files.length; i++) {
-                XMLResource res = (XMLResource) testCollection.createResource(files[i].getName(), "XMLResource");
-                res.setContent(files[i]);
-                testCollection.storeResource(res);
-            }
+			String directory = "samples/shakespeare";
+			File f = new File(ClassLoader.getSystemClassLoader()
+					.getResource(directory).toURI().toURL().getFile());
+			File files[] = f.listFiles(new XMLFilenameFilter());
+
+			for (int i = 0; i < files.length; i++) {
+				XMLResource res = (XMLResource) testCollection.createResource(
+						files[i].getName(), "XMLResource");
+				res.setContent(files[i]);
+				testCollection.storeResource(res);
+			}
 		} catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
+			e.printStackTrace();
+			fail(e.getMessage());
 		}
-	}
-	
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ResourceTest.class);
 	}
 }

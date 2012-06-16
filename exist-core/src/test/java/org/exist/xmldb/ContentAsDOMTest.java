@@ -26,11 +26,13 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
-import junit.textui.TestRunner;
-
+import org.exist.AbstractDBTest;
 import org.exist.storage.DBBroker;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.w3c.dom.Node;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
@@ -42,94 +44,70 @@ import org.xmldb.api.modules.XMLResource;
 import org.xmldb.api.modules.XQueryService;
 
 /**
- * Tests XMLResource.getContentAsDOM() for resources retrieved from
- * an XQuery.
+ * Tests XMLResource.getContentAsDOM() for resources retrieved from an XQuery.
  * 
  * @author wolf
  */
-public class ContentAsDOMTest extends TestCase {
+public class ContentAsDOMTest extends AbstractDBTest {
 
-    private final static String DRIVER = "org.exist.xmldb.DatabaseImpl";
-    private final static String ROOT_URI = "xmldb:exist://" + DBBroker.ROOT_COLLECTION;
-    
-    private final static String XML =
-        "<root><test>ABCDEF</test></root>";
-    
-    private final static String XQUERY =
-        "let $t := /root/test " +
-        "return (" +
-        "<!-- Comment -->," +
-        "<output>{$t}</output>)";
-    
-    private Collection root;
-    
-    public ContentAsDOMTest(String name) {
-        super(name);
-    }
-    
-    public void testGetContentAsDOM() {
-        try {
-        	XQueryService service = (XQueryService) root.getService("XQueryService", "1.0");        
-	        ResourceSet result = service.query(XQUERY);
-	        for(long i = 0; i < result.getSize(); i++) {
-	            XMLResource r = (XMLResource) result.getResource(i);
-	            
-	            System.out.println("Output of getContent():");
-	            System.out.println(r.getContent());
-	            
-	            System.out.println("Output of getContentAsDOM():");
-	            Node node = r.getContentAsDOM();
-	            Transformer t = TransformerFactory.newInstance().newTransformer();
-	            t.setOutputProperty(OutputKeys.INDENT, "yes");
-	            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-	            DOMSource source = new DOMSource(node);
-	            StreamResult output = new StreamResult(System.out);
-	            t.transform(source, output);
-	        }
-        } catch (Exception e) {
-            fail(e.getMessage());            
-        }
-    }
-    
-    /*
-     * @see TestCase#setUp()
-     */
-    protected void setUp() {
-        try {
-            // initialize driver
-            Class cl = Class.forName(DRIVER);
-            Database database = (Database) cl.newInstance();
-            database.setProperty("create-database", "true");
-            DatabaseManager.registerDatabase(database);
-            
-            root = DatabaseManager.getCollection(ROOT_URI, "admin", null);
-            Resource resource = root.createResource("test.xml", "XMLResource");
-            resource.setContent(XML);
-            root.storeResource(resource);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-    }
+	private final static String DRIVER = "org.exist.xmldb.DatabaseImpl";
+	private final static String ROOT_URI = "xmldb:exist://"
+			+ DBBroker.ROOT_COLLECTION;
 
-    /*
-     * @see TestCase#tearDown()
-     */
-    protected void tearDown() {
-    	try {
-	        Resource resource = root.getResource("test.xml");
-	        assertNotNull("text.xml not found", resource);
-	        root.removeResource(resource);
-	        DatabaseInstanceManager mgr = (DatabaseInstanceManager)
-	            root.getService("DatabaseInstanceManager", "1.0");
-	        mgr.shutdown();
-            
-            root = null;
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
-    }
-    
-    public static void main(String[] args) {
-        TestRunner.run(ContentAsDOMTest.class);
-    }
+	private final static String XML = "<root><test>ABCDEF</test></root>";
+
+	private final static String XQUERY = "let $t := /root/test " + "return ("
+			+ "<!-- Comment -->," + "<output>{$t}</output>)";
+
+	private Collection root;
+
+	@Test
+	public void testGetContentAsDOM() throws Exception {
+		XQueryService service = (XQueryService) root.getService(
+				"XQueryService", "1.0");
+		ResourceSet result = service.query(XQUERY);
+		for (long i = 0; i < result.getSize(); i++) {
+			XMLResource r = (XMLResource) result.getResource(i);
+
+			System.out.println("Output of getContent():");
+			System.out.println(r.getContent());
+
+			System.out.println("Output of getContentAsDOM():");
+			Node node = r.getContentAsDOM();
+			Transformer t = TransformerFactory.newInstance().newTransformer();
+			t.setOutputProperty(OutputKeys.INDENT, "yes");
+			t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+			DOMSource source = new DOMSource(node);
+			StreamResult output = new StreamResult(System.out);
+			t.transform(source, output);
+		}
+	}
+
+	@Before
+	public void setUp() throws Exception {
+		cleanUp();
+		// initialize driver
+		Class cl = Class.forName(DRIVER);
+		Database database = (Database) cl.newInstance();
+		database.setProperty("create-database", "true");
+		DatabaseManager.registerDatabase(database);
+
+		root = DatabaseManager.getCollection(ROOT_URI, "admin", null);
+		Resource resource = root.createResource("test.xml", "XMLResource");
+		resource.setContent(XML);
+		root.storeResource(resource);
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		Resource resource = root.getResource("test.xml");
+		assertNotNull("text.xml not found", resource);
+		root.removeResource(resource);
+		DatabaseInstanceManager mgr = (DatabaseInstanceManager) root
+				.getService("DatabaseInstanceManager", "1.0");
+		mgr.shutdown();
+
+		root = null;
+	}
+
 }

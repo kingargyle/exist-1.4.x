@@ -108,8 +108,10 @@ public class XMLGenerator {
         for(int i = 0; i < len; i++) {
             if(i > 0)
                 buf.append(' ');
-            int n = random.nextInt(words.length);
-            buf.append(words[n]);
+            if (words.length > 0) {
+            	int n = random.nextInt(words.length);
+            	buf.append(words[n]);
+            }
         }
         return buf.toString();
     }

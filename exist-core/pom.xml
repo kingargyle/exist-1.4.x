@@ -17,12 +17,12 @@
             <version>2.12</version>
             <configuration>
                <includes>
-                  <include>**/AllCollection*.java</include>
-                  <include>**/AllTrigger*.java</include>
-                  <include>**/AllFulltext*.java</include>
+                  <include>**/org/exist/xmldb/*Test.java</include>
                </includes>
+               <excludes>
+                  <exclude>**/All*.java</exclude>
+               </excludes>
                <testFailureIgnore>true</testFailureIgnore>
-               <runOrder>random</runOrder>
                <systemPropertyVariables>
                   <exist.home>${basedir}</exist.home>
                </systemPropertyVariables>
